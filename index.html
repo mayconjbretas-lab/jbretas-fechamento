@@ -1,0 +1,996 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>JBRETAS — Sistema de Fechamento Diário</title>
+
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#00e5a0">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="JBRETAS">
+  <link rel="apple-touch-icon" href="icon-192.png">
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg: #0d0f12;
+    --surface: #161920;
+    --surface2: #1e2229;
+    --surface3: #252b35;
+    --border: #2a3040;
+    --border2: #3a4355;
+    --accent: #00e5a0;
+    --accent2: #00c488;
+    --accent-dim: rgba(0,229,160,0.12);
+    --accent-dim2: rgba(0,229,160,0.06);
+    --text: #eef0f4;
+    --text2: #8892a4;
+    --text3: #5a6478;
+    --danger: #ff4d6d;
+    --warning: #f9c74f;
+    --info: #4895ef;
+    --mono: 'Space Mono', monospace;
+    --sans: 'DM Sans', sans-serif;
+    --radius: 10px;
+    --radius-lg: 16px;
+  }
+
+  body {
+    font-family: var(--sans);
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* ===== GRID BG ===== */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image:
+      linear-gradient(rgba(0,229,160,0.03) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(0,229,160,0.03) 1px, transparent 1px);
+    background-size: 40px 40px;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  /* ===== SCREENS ===== */
+  .screen { display: none; position: relative; z-index: 1; }
+  .screen.active { display: flex; }
+
+  /* ===== LOGIN ===== */
+  #screen-login {
+    min-height: 100vh;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem;
+  }
+
+  .login-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    padding: 3rem 2.5rem;
+    width: 100%;
+    max-width: 440px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .login-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, var(--accent), transparent);
+  }
+
+  .brand {
+    margin-bottom: 2.5rem;
+  }
+
+  .brand-name {
+    font-family: var(--mono);
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--accent);
+    letter-spacing: 0.08em;
+    line-height: 1;
+  }
+
+  .brand-sub {
+    font-size: 0.72rem;
+    color: var(--text3);
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    margin-top: 6px;
+    font-family: var(--mono);
+  }
+
+  .field-group { margin-bottom: 1.25rem; }
+
+  .field-label {
+    display: block;
+    font-size: 0.72rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--text3);
+    margin-bottom: 8px;
+    font-family: var(--mono);
+  }
+
+  .field-input {
+    width: 100%;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    color: var(--text);
+    font-family: var(--sans);
+    font-size: 0.95rem;
+    padding: 0.75rem 1rem;
+    outline: none;
+    transition: border-color 0.2s, box-shadow 0.2s;
+  }
+
+  .field-input:focus {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px var(--accent-dim);
+  }
+
+  .field-input::placeholder { color: var(--text3); }
+
+  .btn-primary {
+    width: 100%;
+    background: var(--accent);
+    color: #0a0d0f;
+    border: none;
+    border-radius: var(--radius);
+    font-family: var(--mono);
+    font-size: 0.85rem;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    padding: 0.85rem;
+    cursor: pointer;
+    margin-top: 0.5rem;
+    transition: background 0.2s, transform 0.1s;
+  }
+
+  .btn-primary:hover { background: var(--accent2); }
+  .btn-primary:active { transform: scale(0.98); }
+
+  .login-error {
+    color: var(--danger);
+    font-size: 0.8rem;
+    margin-top: 0.75rem;
+    display: none;
+    font-family: var(--mono);
+  }
+
+  /* ===== APP ===== */
+  #screen-app {
+    flex-direction: column;
+    min-height: 100vh;
+  }
+
+  /* TOPBAR */
+  .topbar {
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    padding: 0 1.5rem;
+    height: 60px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+
+  .topbar-brand {
+    font-family: var(--mono);
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: var(--accent);
+    letter-spacing: 0.06em;
+  }
+
+  .topbar-right {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+  }
+
+  .topbar-user {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .avatar {
+    width: 34px;
+    height: 34px;
+    border-radius: 50%;
+    background: var(--accent-dim);
+    border: 1.5px solid var(--accent);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: var(--mono);
+    font-size: 0.7rem;
+    color: var(--accent);
+    font-weight: 700;
+  }
+
+  .topbar-info { line-height: 1.2; }
+
+  .topbar-name {
+    font-size: 0.85rem;
+    font-weight: 500;
+    color: var(--text);
+  }
+
+  .topbar-posto {
+    font-size: 0.72rem;
+    color: var(--text3);
+    font-family: var(--mono);
+  }
+
+  .btn-logout {
+    background: transparent;
+    border: 1px solid var(--border2);
+    border-radius: 8px;
+    color: var(--text3);
+    font-size: 0.75rem;
+    padding: 6px 12px;
+    cursor: pointer;
+    font-family: var(--mono);
+    transition: all 0.2s;
+  }
+
+  .btn-logout:hover { border-color: var(--danger); color: var(--danger); }
+
+  /* MAIN */
+  .app-main {
+    padding: 2rem 1.5rem;
+    max-width: 860px;
+    margin: 0 auto;
+    width: 100%;
+  }
+
+  .page-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    margin-bottom: 2rem;
+    gap: 1rem;
+  }
+
+  .page-title {
+    font-family: var(--mono);
+    font-size: 1.4rem;
+    font-weight: 700;
+    color: var(--text);
+  }
+
+  .page-date {
+    font-size: 0.75rem;
+    color: var(--text3);
+    font-family: var(--mono);
+    margin-top: 6px;
+  }
+
+  .badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: var(--accent-dim);
+    border: 1px solid rgba(0,229,160,0.2);
+    border-radius: 20px;
+    color: var(--accent);
+    font-size: 0.72rem;
+    font-family: var(--mono);
+    padding: 4px 12px;
+  }
+
+  .badge-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--accent);
+    animation: pulse 2s infinite;
+  }
+
+  @keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.4; }
+  }
+
+  /* INFO CARD */
+  .info-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 12px;
+    margin-bottom: 2rem;
+  }
+
+  .info-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 1rem 1.25rem;
+  }
+
+  .info-card-label {
+    font-size: 0.68rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--text3);
+    font-family: var(--mono);
+    margin-bottom: 6px;
+  }
+
+  .info-card-value {
+    font-size: 0.95rem;
+    font-weight: 500;
+    color: var(--text);
+  }
+
+  /* SECTIONS */
+  .section {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    margin-bottom: 1.5rem;
+    overflow: hidden;
+  }
+
+  .section-header {
+    padding: 1rem 1.25rem;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .section-icon {
+    font-size: 1.1rem;
+  }
+
+  .section-title {
+    font-family: var(--mono);
+    font-size: 0.85rem;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--text);
+  }
+
+  .section-body { padding: 1.25rem; }
+
+  /* TANK ROWS */
+  .tank-row {
+    display: grid;
+    grid-template-columns: 1fr auto auto;
+    align-items: center;
+    gap: 12px;
+    padding: 0.75rem 0;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .tank-row:last-child { border-bottom: none; }
+
+  .tank-info { }
+
+  .tank-fuel {
+    font-size: 0.7rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--text3);
+    font-family: var(--mono);
+  }
+
+  .tank-name {
+    font-size: 0.95rem;
+    font-weight: 500;
+    color: var(--text);
+    margin-top: 2px;
+  }
+
+  .tank-cap {
+    font-size: 0.72rem;
+    color: var(--text3);
+    font-family: var(--mono);
+    margin-top: 2px;
+  }
+
+  .tank-vol {
+    font-size: 0.78rem;
+    color: var(--accent);
+    font-family: var(--mono);
+    text-align: right;
+    min-width: 70px;
+  }
+
+  /* STEPPER */
+  .stepper {
+    display: flex;
+    align-items: center;
+    gap: 0;
+    background: var(--surface2);
+    border: 1px solid var(--border2);
+    border-radius: 8px;
+    overflow: hidden;
+  }
+
+  .step-btn {
+    width: 36px;
+    height: 36px;
+    background: transparent;
+    border: none;
+    color: var(--accent);
+    font-size: 1.1rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.15s;
+    font-family: var(--mono);
+  }
+
+  .step-btn:hover { background: var(--accent-dim); }
+
+  .step-input {
+    width: 56px;
+    background: transparent;
+    border: none;
+    border-left: 1px solid var(--border);
+    border-right: 1px solid var(--border);
+    color: var(--text);
+    font-family: var(--mono);
+    font-size: 0.9rem;
+    text-align: center;
+    height: 36px;
+    outline: none;
+    padding: 0 4px;
+  }
+
+  /* FUEL ROWS (vendas) */
+  .fuel-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 12px;
+  }
+
+  .fuel-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 0.75rem 1rem;
+    gap: 12px;
+  }
+
+  .fuel-label {
+    font-size: 0.8rem;
+    color: var(--text2);
+    font-family: var(--mono);
+  }
+
+  /* LUBRIFICANTES */
+  .lub-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.75rem 0;
+    border-bottom: 1px solid var(--border);
+    gap: 12px;
+  }
+
+  .lub-row:last-child { border-bottom: none; }
+
+  .lub-label {
+    font-size: 0.88rem;
+    color: var(--text2);
+  }
+
+  /* TOTAL DISPLAY */
+  .total-row {
+    background: var(--accent-dim2);
+    border: 1px solid rgba(0,229,160,0.15);
+    border-radius: var(--radius);
+    padding: 1rem 1.25rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-top: 1rem;
+  }
+
+  .total-label {
+    font-size: 0.75rem;
+    color: var(--text3);
+    font-family: var(--mono);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+  }
+
+  .total-value {
+    font-family: var(--mono);
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: var(--accent);
+  }
+
+  /* SAVE BUTTON */
+  .save-bar {
+    position: sticky;
+    bottom: 0;
+    padding: 1rem 1.5rem;
+    background: linear-gradient(to top, var(--bg) 60%, transparent);
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+  }
+
+  .btn-save {
+    background: var(--accent);
+    color: #0a0d0f;
+    border: none;
+    border-radius: var(--radius);
+    font-family: var(--mono);
+    font-size: 0.85rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    padding: 0.9rem 2.5rem;
+    cursor: pointer;
+    transition: background 0.2s, transform 0.1s;
+    min-width: 280px;
+  }
+
+  .btn-save:hover { background: var(--accent2); }
+  .btn-save:active { transform: scale(0.98); }
+
+  /* TOAST */
+  .toast {
+    position: fixed;
+    bottom: 2rem;
+    right: 2rem;
+    background: var(--surface);
+    border: 1px solid var(--accent);
+    border-radius: var(--radius);
+    padding: 1rem 1.5rem;
+    color: var(--text);
+    font-size: 0.88rem;
+    z-index: 999;
+    display: none;
+    animation: slideIn 0.3s ease;
+    box-shadow: 0 4px 24px rgba(0,0,0,0.4);
+  }
+
+  .toast.show { display: block; }
+
+  @keyframes slideIn {
+    from { transform: translateX(20px); opacity: 0; }
+    to { transform: translateX(0); opacity: 1; }
+  }
+
+  .toast-title {
+    color: var(--accent);
+    font-family: var(--mono);
+    font-size: 0.78rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    margin-bottom: 4px;
+  }
+
+  /* FUEL COLOR CHIPS */
+  .fuel-chip {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    display: inline-block;
+    margin-right: 6px;
+  }
+  .chip-gc { background: #4895ef; }
+  .chip-ga { background: #f9c74f; }
+  .chip-et { background: #00e5a0; }
+  .chip-s10 { background: #ff6b6b; }
+  .chip-s500 { background: #c77dff; }
+  .chip-lub { background: #ff9f1c; }
+</style>
+</head>
+<body>
+
+<!-- ===== LOGIN ===== -->
+<div id="screen-login" class="screen active">
+  <div class="login-card">
+    <div class="brand">
+      <div class="brand-name">JBRETAS</div>
+      <div class="brand-sub">// Sistema de Fechamento Diário</div>
+    </div>
+
+    <div class="field-group">
+      <label class="field-label">E-mail</label>
+      <input class="field-input" type="email" id="login-email" placeholder="seu@email.com" autocomplete="email">
+    </div>
+
+    <div class="field-group">
+      <label class="field-label">Senha</label>
+      <input class="field-input" type="password" id="login-senha" placeholder="••••••••" autocomplete="current-password">
+    </div>
+
+    <button class="btn-primary" onclick="doLogin()">ENTRAR</button>
+    <div class="login-error" id="login-error">E-mail ou senha incorretos.</div>
+  </div>
+</div>
+
+<!-- ===== APP ===== -->
+<div id="screen-app" class="screen">
+
+  <div class="topbar">
+    <div class="topbar-brand">JBRETAS</div>
+    <div class="topbar-right">
+      <div class="topbar-user">
+        <div class="avatar" id="app-avatar">MD</div>
+        <div class="topbar-info">
+          <div class="topbar-name" id="app-gerente">Maycon Douglas</div>
+          <div class="topbar-posto" id="app-posto">P. TRANCOSO</div>
+        </div>
+      </div>
+      <button class="btn-logout" onclick="doLogout()">SAIR</button>
+    </div>
+  </div>
+
+  <div class="app-main">
+
+    <div class="page-header">
+      <div>
+        <div class="page-title">📋 Fechamento Diário</div>
+        <div class="page-date" id="page-date"></div>
+      </div>
+      <div class="badge">
+        <span class="badge-dot"></span>
+        <span>Em andamento</span>
+      </div>
+    </div>
+
+    <!-- INFO -->
+    <div class="info-grid">
+      <div class="info-card">
+        <div class="info-card-label">Gerente</div>
+        <div class="info-card-value" id="card-gerente">—</div>
+      </div>
+      <div class="info-card">
+        <div class="info-card-label">Posto</div>
+        <div class="info-card-value" id="card-posto">—</div>
+      </div>
+      <div class="info-card">
+        <div class="info-card-label">Data</div>
+        <div class="info-card-value" id="card-data">—</div>
+      </div>
+    </div>
+
+    <!-- MEDIÇÃO TANQUES -->
+    <div class="section">
+      <div class="section-header">
+        <span class="section-icon">🛢️</span>
+        <span class="section-title">Medição de Tanques (CM)</span>
+      </div>
+      <div class="section-body" id="tanques-body">
+        <!-- gerado por JS -->
+      </div>
+    </div>
+
+    <!-- VENDAS COMBUSTÍVEL -->
+    <div class="section">
+      <div class="section-header">
+        <span class="section-icon">⛽</span>
+        <span class="section-title">Vendas de Combustível (Litros)</span>
+      </div>
+      <div class="section-body">
+        <div class="fuel-grid" id="vendas-body"></div>
+        <div class="total-row">
+          <span class="total-label">Total de Vendas</span>
+          <span class="total-value" id="total-vendas">0 L</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- LUBRIFICANTES -->
+    <div class="section">
+      <div class="section-header">
+        <span class="section-icon">💧</span>
+        <span class="section-title">Vendas de Lubrificantes</span>
+      </div>
+      <div class="section-body">
+        <div class="lub-row">
+          <span class="lub-label">Vendas Soutag</span>
+          <div class="stepper">
+            <button class="step-btn" onclick="stepChange('lub-soutag',-1)">−</button>
+            <input class="step-input" id="lub-soutag" value="0" type="number" min="0" oninput="updateTotals()">
+            <button class="step-btn" onclick="stepChange('lub-soutag',1)">+</button>
+          </div>
+        </div>
+        <div class="lub-row">
+          <span class="lub-label">Venda do Dia</span>
+          <div class="stepper">
+            <button class="step-btn" onclick="stepChange('lub-dia',-1)">−</button>
+            <input class="step-input" id="lub-dia" value="0" type="number" min="0" oninput="updateTotals()">
+            <button class="step-btn" onclick="stepChange('lub-dia',1)">+</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /app-main -->
+
+  <div class="save-bar">
+    <button class="btn-save" onclick="salvarFechamento()">💾 Salvar Fechamento Diário</button>
+  </div>
+
+</div><!-- /screen-app -->
+
+<!-- TOAST -->
+<div class="toast" id="toast">
+  <div class="toast-title">✅ Salvo com sucesso</div>
+  <div id="toast-msg">Fechamento registrado.</div>
+</div>
+
+<script>
+/* =====================
+   DADOS — usuários, postos, tanques, combustíveis
+   (simula backend cadastrado)
+   ===================== */
+const DB = {
+  users: [
+    {
+      email: 'maycon@jbretas.com',
+      senha: '123456',
+      gerente: 'Maycon Douglas',
+      postoId: 'P01'
+    },
+    {
+      email: 'carlos@jbretas.com',
+      senha: '123456',
+      gerente: 'Carlos Ferreira',
+      postoId: 'P02'
+    },
+    {
+      email: 'ana@jbretas.com',
+      senha: '123456',
+      gerente: 'Ana Souza',
+      postoId: 'P03'
+    }
+  ],
+
+  postos: {
+    P01: {
+      nome: 'P. TRANCOSO',
+      tanques: [
+        { id: 'tq1', fuel: 'GAS. COMUM', nome: 'TQ. 1', capacidade: 30000, chip: 'chip-gc' },
+        { id: 'tq5', fuel: 'GAS. COMUM', nome: 'TQ. 5', capacidade: 15000, chip: 'chip-gc' },
+        { id: 'tq3', fuel: 'GAS. ADITIV', nome: 'TQ. 3', capacidade: 15000, chip: 'chip-ga' },
+        { id: 'tq2', fuel: 'ETANOL',     nome: 'TQ. 2', capacidade: 15000, chip: 'chip-et' },
+        { id: 'tq4', fuel: 'DIESEL S10', nome: 'TQ. 4', capacidade: 15000, chip: 'chip-s10' },
+      ],
+      combustiveis: [
+        { id: 'vgc',  label: 'Gasolina Comum',   chip: 'chip-gc'  },
+        { id: 'vga',  label: 'Gasolina Aditiv.',  chip: 'chip-ga'  },
+        { id: 'vet',  label: 'Etanol',            chip: 'chip-et'  },
+        { id: 'vs10', label: 'Diesel S10',        chip: 'chip-s10' },
+      ]
+    },
+    P02: {
+      nome: 'POSTO MATRIZ',
+      tanques: [
+        { id: 'tq1', fuel: 'GAS. COMUM',  nome: 'TQ. 1', capacidade: 50000, chip: 'chip-gc' },
+        { id: 'tq2', fuel: 'ETANOL',      nome: 'TQ. 2', capacidade: 20000, chip: 'chip-et' },
+        { id: 'tq3', fuel: 'DIESEL S10',  nome: 'TQ. 3', capacidade: 30000, chip: 'chip-s10' },
+        { id: 'tq4', fuel: 'DIESEL S500', nome: 'TQ. 4', capacidade: 30000, chip: 'chip-s500' },
+      ],
+      combustiveis: [
+        { id: 'vgc',   label: 'Gasolina Comum',  chip: 'chip-gc'   },
+        { id: 'vet',   label: 'Etanol',           chip: 'chip-et'   },
+        { id: 'vs10',  label: 'Diesel S10',       chip: 'chip-s10'  },
+        { id: 'vs500', label: 'Diesel S500',      chip: 'chip-s500' },
+      ]
+    },
+    P03: {
+      nome: 'POSTO FILIAL',
+      tanques: [
+        { id: 'tq1', fuel: 'GAS. COMUM',  nome: 'TQ. 1', capacidade: 25000, chip: 'chip-gc' },
+        { id: 'tq2', fuel: 'GAS. ADITIV', nome: 'TQ. 2', capacidade: 12000, chip: 'chip-ga' },
+        { id: 'tq3', fuel: 'ETANOL',      nome: 'TQ. 3', capacidade: 15000, chip: 'chip-et' },
+      ],
+      combustiveis: [
+        { id: 'vgc', label: 'Gasolina Comum',  chip: 'chip-gc' },
+        { id: 'vga', label: 'Gasolina Aditiv.', chip: 'chip-ga' },
+        { id: 'vet', label: 'Etanol',           chip: 'chip-et' },
+      ]
+    }
+  }
+};
+
+/* tabela de litros por cm (simplificada) */
+function cmToLitros(cm, cap) {
+  return Math.round((cm / 200) * cap);
+}
+
+let currentUser = null;
+let currentPosto = null;
+
+/* =====================  LOGIN  ===================== */
+function doLogin() {
+  const email = document.getElementById('login-email').value.trim().toLowerCase();
+  const senha = document.getElementById('login-senha').value;
+  const user = DB.users.find(u => u.email === email && u.senha === senha);
+
+  if (!user) {
+    document.getElementById('login-error').style.display = 'block';
+    return;
+  }
+
+  document.getElementById('login-error').style.display = 'none';
+  currentUser = user;
+  currentPosto = DB.postos[user.postoId];
+  initApp();
+  showScreen('app');
+}
+
+document.getElementById('login-senha').addEventListener('keydown', e => {
+  if (e.key === 'Enter') doLogin();
+});
+
+function doLogout() {
+  currentUser = null;
+  currentPosto = null;
+  document.getElementById('login-email').value = '';
+  document.getElementById('login-senha').value = '';
+  showScreen('login');
+}
+
+function showScreen(name) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById('screen-' + name).classList.add('active');
+}
+
+/* =====================  APP  ===================== */
+function initApp() {
+  const gerente = currentUser.gerente;
+  const posto = currentPosto;
+  const initials = gerente.split(' ').map(w => w[0]).slice(0,2).join('');
+  const now = new Date();
+  const dateStr = now.toLocaleDateString('pt-BR', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+  const dateFmt = now.toLocaleDateString('pt-BR');
+
+  document.getElementById('app-avatar').textContent = initials;
+  document.getElementById('app-gerente').textContent = gerente;
+  document.getElementById('app-posto').textContent = posto.nome;
+  document.getElementById('card-gerente').textContent = gerente;
+  document.getElementById('card-posto').textContent = posto.nome;
+  document.getElementById('card-data').textContent = dateFmt;
+  document.getElementById('page-date').textContent = dateStr;
+
+  buildTanques(posto.tanques);
+  buildVendas(posto.combustiveis);
+  updateTotals();
+}
+
+function buildTanques(tanques) {
+  const body = document.getElementById('tanques-body');
+  body.innerHTML = '';
+  tanques.forEach(t => {
+    const row = document.createElement('div');
+    row.className = 'tank-row';
+    row.innerHTML = `
+      <div class="tank-info">
+        <div class="tank-fuel">
+          <span class="fuel-chip ${t.chip}"></span>${t.fuel}
+        </div>
+        <div class="tank-name">${t.nome}</div>
+        <div class="tank-cap">Cap: ${t.capacidade.toLocaleString('pt-BR')} L</div>
+      </div>
+      <div class="tank-vol" id="vol-${t.id}">0 L</div>
+      <div class="stepper">
+        <button class="step-btn" onclick="stepChange('cm-${t.id}',-1)">−</button>
+        <input class="step-input" id="cm-${t.id}" value="0" type="number" min="0" max="200"
+          oninput="updateVol('${t.id}', ${t.capacidade})">
+        <button class="step-btn" onclick="stepChange('cm-${t.id}',1)">+</button>
+      </div>
+    `;
+    body.appendChild(row);
+  });
+}
+
+function buildVendas(combustiveis) {
+  const body = document.getElementById('vendas-body');
+  body.innerHTML = '';
+  combustiveis.forEach(c => {
+    const div = document.createElement('div');
+    div.className = 'fuel-row';
+    div.innerHTML = `
+      <span class="fuel-label">
+        <span class="fuel-chip ${c.chip}"></span>${c.label}
+      </span>
+      <div class="stepper">
+        <button class="step-btn" onclick="stepChange('venda-${c.id}',-100)">−</button>
+        <input class="step-input" id="venda-${c.id}" value="0" type="number" min="0"
+          style="width:70px" oninput="updateTotals()">
+        <button class="step-btn" onclick="stepChange('venda-${c.id}',100)">+</button>
+      </div>
+    `;
+    body.appendChild(div);
+  });
+}
+
+function updateVol(id, cap) {
+  const cm = parseInt(document.getElementById('cm-' + id).value) || 0;
+  const vol = cmToLitros(cm, cap);
+  document.getElementById('vol-' + id).textContent = vol.toLocaleString('pt-BR') + ' L';
+}
+
+function stepChange(id, delta) {
+  const el = document.getElementById(id);
+  const val = parseInt(el.value) || 0;
+  const min = parseInt(el.min) || 0;
+  const max = el.max ? parseInt(el.max) : Infinity;
+  el.value = Math.min(max, Math.max(min, val + delta));
+  el.dispatchEvent(new Event('input'));
+}
+
+function updateTotals() {
+  if (!currentPosto) return;
+  let total = 0;
+  currentPosto.combustiveis.forEach(c => {
+    const el = document.getElementById('venda-' + c.id);
+    if (el) total += parseInt(el.value) || 0;
+  });
+  document.getElementById('total-vendas').textContent = total.toLocaleString('pt-BR') + ' L';
+}
+
+/* =====================  SAVE  ===================== */
+function salvarFechamento() {
+  const btn = document.querySelector('.btn-save');
+  btn.textContent = '⏳ Salvando...';
+  btn.disabled = true;
+
+  setTimeout(() => {
+    btn.textContent = '💾 Salvar Fechamento Diário';
+    btn.disabled = false;
+    showToast('Fechamento salvo com sucesso!', 'Registro enviado para o sistema.');
+  }, 1200);
+}
+
+function showToast(title, msg) {
+  const toast = document.getElementById('toast');
+  toast.querySelector('.toast-title').textContent = '✅ ' + title;
+  document.getElementById('toast-msg').textContent = msg;
+  toast.classList.add('show');
+  setTimeout(() => toast.classList.remove('show'), 4000);
+}
+
+/* data na tela de login */
+const loginDate = new Date().toLocaleDateString('pt-BR', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
+</script>
+
+
+<script>
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+      navigator.serviceWorker.register('./service-worker.js')
+        .then(reg => console.log('SW registrado:', reg.scope))
+        .catch(err => console.log('SW falhou:', err));
+    });
+  }
+</script>
+</body>
+</html>
