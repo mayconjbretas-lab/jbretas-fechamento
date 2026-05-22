@@ -958,16 +958,68 @@ function updateTotals() {
 }
 
 /* =====================  SAVE  ===================== */
+const SHEETS_URL = 'https://script.google.com/macros/s/AKfycbwoWCevroQ4G0rk-rMgdHIkF3wgZsAgjM-22oxGGGYcElreUGgObV5ACAecHIbRfqG2/exec';
+
 function salvarFechamento() {
   const btn = document.querySelector('.btn-save');
   btn.textContent = '⏳ Salvando...';
   btn.disabled = true;
 
-  setTimeout(() => {
+  // Coleta tanques
+  const tanqueInfo = currentPosto.tanques.map(t => {
+    const cm = document.getElementById('cm-' + t.id)?.value || 0;
+    const vol = cmToLitros(parseInt(cm), t.capacidade);
+    return `${t.nome} (${t.fuel}): ${cm}cm = ${vol.toLocaleString('pt-BR')}L`;
+  }).join(' | ');
+
+  // Coleta vendas
+  const vendasInfo = currentPosto.combustiveis.map(c => {
+    const val = document.getElementById('venda-' + c.id)?.value || 0;
+    return `${c.label}: ${parseInt(val).toLocaleString('pt-BR')}L`;
+  }).join(' | ');
+
+  // Total vendas
+  const totalVendas = document.getElementById('total-vendas')?.textContent || '0 L';
+
+  // Lubrificantes
+  const lubTrocaOleo = document.getElementById('lub-troca')?.value || 0;
+  const lubSoutag    = document.getElementById('lub-soutag')?.value || 0;
+  const lubDia       = document.getElementById('lub-dia')?.value || 0;
+
+  // Data e hora
+  const now = new Date();
+  const data = now.toLocaleDateString('pt-BR');
+  const hora = now.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
+
+  const payload = {
+    data,
+    hora,
+    posto:        currentPosto.nome,
+    gerente:      currentUser.gerente,
+    tanques:      tanqueInfo,
+    vendas:       vendasInfo,
+    totalVendas,
+    lubTrocaOleo,
+    lubSoutag,
+    lubDia
+  };
+
+  fetch(SHEETS_URL, {
+    method: 'POST',
+    mode: 'no-cors',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(payload)
+  })
+  .then(() => {
     btn.textContent = '💾 Salvar Fechamento Diário';
     btn.disabled = false;
-    showToast('Fechamento salvo com sucesso!', 'Registro enviado para o sistema.');
-  }, 1200);
+    showToast('Fechamento salvo com sucesso!', `${currentPosto.nome} — ${data} às ${hora}`);
+  })
+  .catch(() => {
+    btn.textContent = '💾 Salvar Fechamento Diário';
+    btn.disabled = false;
+    showToast('Erro ao salvar', 'Verifique sua conexão e tente novamente.');
+  });
 }
 
 function showToast(title, msg) {
