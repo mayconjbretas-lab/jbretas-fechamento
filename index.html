@@ -1394,16 +1394,23 @@ let currentPosto = null;
 function doLogin() {
   const email = document.getElementById('login-email').value.trim().toLowerCase();
   const senha = document.getElementById('login-senha').value;
-  const user = DB.users.find(u => u.email === email && u.senha === senha);
 
-  if (!user) {
+  let foundUser = null;
+  let foundPosto = null;
+  for (const key of Object.keys(DB)) {
+    const posto = DB[key];
+    const user = posto.users && posto.users.find(u => u.email.toLowerCase() === email && u.senha === senha);
+    if (user) { foundUser = user; foundPosto = posto; break; }
+  }
+
+  if (!foundUser) {
     document.getElementById('login-error').style.display = 'block';
     return;
   }
 
   document.getElementById('login-error').style.display = 'none';
-  currentUser = user;
-  currentPosto = DB.postos[user.postoId];
+  currentUser = foundUser;
+  currentPosto = foundPosto;
   initApp();
   showScreen('app');
 }
