@@ -751,73 +751,635 @@
    (simula backend cadastrado)
    ===================== */
 const DB = {
-  users: [
-    {
-      email: 'maycon@jbretas.com',
-      senha: '123456',
-      gerente: 'Maycon Douglas',
-      postoId: 'P01'
-    },
-    {
-      email: 'carlos@jbretas.com',
-      senha: '123456',
-      gerente: 'Carlos Ferreira',
-      postoId: 'P02'
-    },
-    {
-      email: 'ana@jbretas.com',
-      senha: '123456',
-      gerente: 'Ana Souza',
-      postoId: 'P03'
-    }
-  ],
-
-  postos: {
-    P01: {
-      nome: 'P. TRANCOSO',
-      tanques: [
-        { id: 'tq1', fuel: 'GAS. COMUM', nome: 'TQ. 1', capacidade: 30000, chip: 'chip-gc' },
-        { id: 'tq5', fuel: 'GAS. COMUM', nome: 'TQ. 5', capacidade: 15000, chip: 'chip-gc' },
-        { id: 'tq3', fuel: 'GAS. ADITIV', nome: 'TQ. 3', capacidade: 15000, chip: 'chip-ga' },
-        { id: 'tq2', fuel: 'ETANOL',     nome: 'TQ. 2', capacidade: 15000, chip: 'chip-et' },
-        { id: 'tq4', fuel: 'DIESEL S10', nome: 'TQ. 4', capacidade: 15000, chip: 'chip-s10' },
-      ],
-      combustiveis: [
-        { id: 'vgc',  label: 'Gasolina Comum',   chip: 'chip-gc'  },
-        { id: 'vga',  label: 'Gasolina Aditiv.',  chip: 'chip-ga'  },
-        { id: 'vet',  label: 'Etanol',            chip: 'chip-et'  },
-        { id: 'vs10', label: 'Diesel S10',        chip: 'chip-s10' },
-      ]
-    },
-    P02: {
-      nome: 'POSTO MATRIZ',
-      tanques: [
-        { id: 'tq1', fuel: 'GAS. COMUM',  nome: 'TQ. 1', capacidade: 50000, chip: 'chip-gc' },
-        { id: 'tq2', fuel: 'ETANOL',      nome: 'TQ. 2', capacidade: 20000, chip: 'chip-et' },
-        { id: 'tq3', fuel: 'DIESEL S10',  nome: 'TQ. 3', capacidade: 30000, chip: 'chip-s10' },
-        { id: 'tq4', fuel: 'DIESEL S500', nome: 'TQ. 4', capacidade: 30000, chip: 'chip-s500' },
-      ],
-      combustiveis: [
-        { id: 'vgc',   label: 'Gasolina Comum',  chip: 'chip-gc'   },
-        { id: 'vet',   label: 'Etanol',           chip: 'chip-et'   },
-        { id: 'vs10',  label: 'Diesel S10',       chip: 'chip-s10'  },
-        { id: 'vs500', label: 'Diesel S500',      chip: 'chip-s500' },
-      ]
-    },
-    P03: {
-      nome: 'POSTO FILIAL',
-      tanques: [
-        { id: 'tq1', fuel: 'GAS. COMUM',  nome: 'TQ. 1', capacidade: 25000, chip: 'chip-gc' },
-        { id: 'tq2', fuel: 'GAS. ADITIV', nome: 'TQ. 2', capacidade: 12000, chip: 'chip-ga' },
-        { id: 'tq3', fuel: 'ETANOL',      nome: 'TQ. 3', capacidade: 15000, chip: 'chip-et' },
-      ],
-      combustiveis: [
-        { id: 'vgc', label: 'Gasolina Comum',  chip: 'chip-gc' },
-        { id: 'vga', label: 'Gasolina Aditiv.', chip: 'chip-ga' },
-        { id: 'vet', label: 'Etanol',           chip: 'chip-et' },
-      ]
-    }
-  }
+  "P01": {
+    nome: "P. ALEX",
+    users: [{ email: "gerente1@jbretas.com", senha: "posto01", gerente: "Gerente P. ALEX" }],
+    tanques: [
+      { id: "t1_1", nome: "TQ. 1", fuel: "DIESEL S-10", capacidade: 10000 },
+      { id: "t1_2", nome: "TQ. 2", fuel: "GASOLINA ADITIVADA", capacidade: 10000 },
+      { id: "t1_3", nome: "TQ. 3", fuel: "ETANOL", capacidade: 10000 },
+      { id: "t1_4", nome: "TQ. 4", fuel: "GASOLINA COMUM", capacidade: 30000 },
+      { id: "t1_5", nome: "TQ. 5", fuel: "ETANOL", capacidade: 15000 },
+    ],
+    combustiveis: [
+      { id: "diesel_s_10", label: "DIESEL S-10" },
+      { id: "gasolina_aditivada", label: "GASOLINA ADITIVADA" },
+      { id: "etanol", label: "ETANOL" },
+      { id: "gasolina_comum", label: "GASOLINA COMUM" },
+    ],
+  },
+  "P02": {
+    nome: "P. ANA LÚCIA",
+    users: [{ email: "gerente2@jbretas.com", senha: "posto02", gerente: "Gerente P. ANA LÚCIA" }],
+    tanques: [
+      { id: "t2_1", nome: "TQ. 1", fuel: "GASOLINA COMUM", capacidade: 30000 },
+      { id: "t2_2", nome: "TQ. 2", fuel: "GASOLINA COMUM", capacidade: 10000 },
+      { id: "t2_3", nome: "TQ. 3", fuel: "ETANOL ADITIVADO", capacidade: 20000 },
+      { id: "t2_4", nome: "TQ. 4", fuel: "ETANOL ADITIVADO", capacidade: 7500 },
+      { id: "t2_5", nome: "TQ. 5", fuel: "DIESEL S-10", capacidade: 7500 },
+    ],
+    combustiveis: [
+      { id: "gasolina_comum", label: "GASOLINA COMUM" },
+      { id: "etanol_aditivado", label: "ETANOL ADITIVADO" },
+      { id: "diesel_s_10", label: "DIESEL S-10" },
+    ],
+  },
+  "P03": {
+    nome: "P. ARAPONGA",
+    users: [{ email: "gerente3@jbretas.com", senha: "posto03", gerente: "Gerente P. ARAPONGA" }],
+    tanques: [
+      { id: "t3_1", nome: "TQ. 1", fuel: "GASOLINA COMUM", capacidade: 30000 },
+      { id: "t3_2", nome: "TQ. 2", fuel: "DIESEL S-10", capacidade: 10000 },
+      { id: "t3_3", nome: "TQ. 3", fuel: "ETANOL", capacidade: 10000 },
+      { id: "t3_4", nome: "TQ. 4", fuel: "GASOLINA ADITIVADA", capacidade: 10000 },
+    ],
+    combustiveis: [
+      { id: "gasolina_comum", label: "GASOLINA COMUM" },
+      { id: "diesel_s_10", label: "DIESEL S-10" },
+      { id: "etanol", label: "ETANOL" },
+      { id: "gasolina_aditivada", label: "GASOLINA ADITIVADA" },
+    ],
+  },
+  "P04": {
+    nome: "P. AVIVA",
+    users: [{ email: "gerente4@jbretas.com", senha: "posto04", gerente: "Gerente P. AVIVA" }],
+    tanques: [
+      { id: "t4_1", nome: "TQ. 1", fuel: "GASOLINA COMUM", capacidade: 30000 },
+      { id: "t4_2", nome: "TQ. 2", fuel: "GASOLINA ADITIVADA", capacidade: 10000 },
+      { id: "t4_3", nome: "TQ. 3", fuel: "ETANOL", capacidade: 20000 },
+      { id: "t4_4", nome: "TQ. 4", fuel: "DIESEL S-10", capacidade: 15000 },
+      { id: "t4_5", nome: "TQ. 5", fuel: "DIESEL S-500", capacidade: 15000 },
+    ],
+    combustiveis: [
+      { id: "gasolina_comum", label: "GASOLINA COMUM" },
+      { id: "gasolina_aditivada", label: "GASOLINA ADITIVADA" },
+      { id: "etanol", label: "ETANOL" },
+      { id: "diesel_s_10", label: "DIESEL S-10" },
+      { id: "diesel_s_500", label: "DIESEL S-500" },
+    ],
+  },
+  "P05": {
+    nome: "P. BAHAMAS",
+    users: [{ email: "gerente5@jbretas.com", senha: "posto05", gerente: "Gerente P. BAHAMAS" }],
+    tanques: [
+      { id: "t5_1", nome: "TQ. 1", fuel: "ETANOL", capacidade: 10000 },
+      { id: "t5_2", nome: "TQ. 2", fuel: "GASOLINA ADITIVADA", capacidade: 10000 },
+      { id: "t5_3", nome: "TQ. 3", fuel: "GASOLINA COMUM", capacidade: 10000 },
+      { id: "t5_4", nome: "TQ. 4", fuel: "GASOLINA COMUM", capacidade: 15000 },
+    ],
+    combustiveis: [
+      { id: "etanol", label: "ETANOL" },
+      { id: "gasolina_aditivada", label: "GASOLINA ADITIVADA" },
+      { id: "gasolina_comum", label: "GASOLINA COMUM" },
+    ],
+  },
+  "P06": {
+    nome: "P. BARBOSA",
+    users: [{ email: "gerente6@jbretas.com", senha: "posto06", gerente: "Gerente P. BARBOSA" }],
+    tanques: [
+      { id: "t6_1", nome: "TQ. 1", fuel: "ETANOL", capacidade: 15000 },
+      { id: "t6_2", nome: "TQ. 2", fuel: "DIESEL S-10", capacidade: 15000 },
+      { id: "t6_3", nome: "TQ. 3", fuel: "GASOLINA COMUM", capacidade: 30000 },
+    ],
+    combustiveis: [
+      { id: "etanol", label: "ETANOL" },
+      { id: "diesel_s_10", label: "DIESEL S-10" },
+      { id: "gasolina_comum", label: "GASOLINA COMUM" },
+    ],
+  },
+  "P07": {
+    nome: "P. BERNARDO",
+    users: [{ email: "gerente7@jbretas.com", senha: "posto07", gerente: "Gerente P. BERNARDO" }],
+    tanques: [
+      { id: "t7_1", nome: "TQ. 1", fuel: "ETANOL", capacidade: 15000 },
+      { id: "t7_2", nome: "TQ. 2", fuel: "GASOLINA COMUM", capacidade: 15000 },
+      { id: "t7_3", nome: "TQ. 3", fuel: "DIESEL S-10", capacidade: 30000 },
+      { id: "t7_4", nome: "TQ. 4", fuel: "GASOLINA COMUM", capacidade: 20000 },
+      { id: "t7_5", nome: "TQ. 5", fuel: "DIESEL S-500", capacidade: 10000 },
+    ],
+    combustiveis: [
+      { id: "etanol", label: "ETANOL" },
+      { id: "gasolina_comum", label: "GASOLINA COMUM" },
+      { id: "diesel_s_10", label: "DIESEL S-10" },
+      { id: "diesel_s_500", label: "DIESEL S-500" },
+    ],
+  },
+  "P08": {
+    nome: "P. BOMBOM (G1)",
+    users: [{ email: "gerente8@jbretas.com", senha: "posto08", gerente: "Gerente P. BOMBOM (G1)" }],
+    tanques: [
+      { id: "t8_1", nome: "TQ. 1", fuel: "ETANOL", capacidade: 30000 },
+      { id: "t8_2", nome: "TQ. 2", fuel: "DIESEL S-10", capacidade: 15000 },
+      { id: "t8_3", nome: "TQ. 3", fuel: "GASOLINA COMUM", capacidade: 20000 },
+      { id: "t8_4", nome: "TQ. 4", fuel: "GASOLINA ADITIVADA", capacidade: 10000 },
+    ],
+    combustiveis: [
+      { id: "etanol", label: "ETANOL" },
+      { id: "diesel_s_10", label: "DIESEL S-10" },
+      { id: "gasolina_comum", label: "GASOLINA COMUM" },
+      { id: "gasolina_aditivada", label: "GASOLINA ADITIVADA" },
+    ],
+  },
+  "P09": {
+    nome: "P. BOMBOM (G2)",
+    users: [{ email: "gerente9@jbretas.com", senha: "posto09", gerente: "Gerente P. BOMBOM (G2)" }],
+    tanques: [
+      { id: "t9_1", nome: "TQ. 1", fuel: "GASOLINA COMUM", capacidade: 15000 },
+      { id: "t9_2", nome: "TQ. 2", fuel: "ETANOL", capacidade: 10000 },
+      { id: "t9_3", nome: "TQ. 3", fuel: "GASOLINA ADITIVADA", capacidade: 10000 },
+      { id: "t9_4", nome: "TQ. 4", fuel: "ETANOL", capacidade: 10000 },
+    ],
+    combustiveis: [
+      { id: "gasolina_comum", label: "GASOLINA COMUM" },
+      { id: "etanol", label: "ETANOL" },
+      { id: "gasolina_aditivada", label: "GASOLINA ADITIVADA" },
+    ],
+  },
+  "P10": {
+    nome: "P. BRUNA",
+    users: [{ email: "gerente10@jbretas.com", senha: "posto10", gerente: "Gerente P. BRUNA" }],
+    tanques: [
+      { id: "t10_1", nome: "TQ. 1", fuel: "ETANOL", capacidade: 30000 },
+      { id: "t10_2", nome: "TQ. 2", fuel: "DIESEL S-500", capacidade: 30000 },
+      { id: "t10_3", nome: "TQ. 3", fuel: "DIESEL S-10", capacidade: 15000 },
+      { id: "t10_4", nome: "TQ. 4", fuel: "DIESEL S-10", capacidade: 15000 },
+      { id: "t10_5", nome: "TQ. 5", fuel: "GASOLINA ADITIVADA", capacidade: 10000 },
+      { id: "t10_6", nome: "TQ. 6", fuel: "GASOLINA COMUM", capacidade: 20000 },
+    ],
+    combustiveis: [
+      { id: "etanol", label: "ETANOL" },
+      { id: "diesel_s_500", label: "DIESEL S-500" },
+      { id: "diesel_s_10", label: "DIESEL S-10" },
+      { id: "gasolina_aditivada", label: "GASOLINA ADITIVADA" },
+      { id: "gasolina_comum", label: "GASOLINA COMUM" },
+    ],
+  },
+  "P11": {
+    nome: "P. DIFERENCIAL",
+    users: [{ email: "gerente11@jbretas.com", senha: "posto11", gerente: "Gerente P. DIFERENCIAL" }],
+    tanques: [
+      { id: "t11_1", nome: "TQ. 1", fuel: "GASOLINA COMUM", capacidade: 30000 },
+      { id: "t11_2", nome: "TQ. 2", fuel: "GASOLINA ADITIVADA", capacidade: 15000 },
+      { id: "t11_3", nome: "TQ. 3", fuel: "ETANOL", capacidade: 15000 },
+      { id: "t11_4", nome: "TQ. 4", fuel: "DIESEL S-10", capacidade: 15000 },
+    ],
+    combustiveis: [
+      { id: "gasolina_comum", label: "GASOLINA COMUM" },
+      { id: "gasolina_aditivada", label: "GASOLINA ADITIVADA" },
+      { id: "etanol", label: "ETANOL" },
+      { id: "diesel_s_10", label: "DIESEL S-10" },
+    ],
+  },
+  "P12": {
+    nome: "P. ESPAÇO REAL",
+    users: [{ email: "gerente12@jbretas.com", senha: "posto12", gerente: "Gerente P. ESPAÇO REAL" }],
+    tanques: [
+      { id: "t12_1", nome: "TQ. 1", fuel: "GASOLINA ADITIVADA", capacidade: 10000 },
+      { id: "t12_2", nome: "TQ. 2", fuel: "GASOLINA COMUM", capacidade: 20000 },
+      { id: "t12_3", nome: "TQ. 3", fuel: "GASOLINA COMUM", capacidade: 10000 },
+      { id: "t12_4", nome: "TQ. 4", fuel: "ETANOL", capacidade: 20000 },
+      { id: "t12_5", nome: "TQ. 5", fuel: "DIESEL S-500", capacidade: 15000 },
+      { id: "t12_6", nome: "TQ. 6", fuel: "DIESEL S-10", capacidade: 15000 },
+    ],
+    combustiveis: [
+      { id: "gasolina_aditivada", label: "GASOLINA ADITIVADA" },
+      { id: "gasolina_comum", label: "GASOLINA COMUM" },
+      { id: "etanol", label: "ETANOL" },
+      { id: "diesel_s_500", label: "DIESEL S-500" },
+      { id: "diesel_s_10", label: "DIESEL S-10" },
+    ],
+  },
+  "P13": {
+    nome: "P. FELIPAO",
+    users: [{ email: "gerente13@jbretas.com", senha: "posto13", gerente: "Gerente P. FELIPAO" }],
+    tanques: [
+      { id: "t13_1", nome: "TQ. 1", fuel: "DIESEL S-10", capacidade: 10000 },
+      { id: "t13_2", nome: "TQ. 2", fuel: "ETANOL", capacidade: 20000 },
+      { id: "t13_3", nome: "TQ. 3", fuel: "GASOLINA COMUM", capacidade: 20000 },
+      { id: "t13_4", nome: "TQ. 4", fuel: "DIESEL S-500", capacidade: 10000 },
+    ],
+    combustiveis: [
+      { id: "diesel_s_10", label: "DIESEL S-10" },
+      { id: "etanol", label: "ETANOL" },
+      { id: "gasolina_comum", label: "GASOLINA COMUM" },
+      { id: "diesel_s_500", label: "DIESEL S-500" },
+    ],
+  },
+  "P14": {
+    nome: "P. GLÓRIA",
+    users: [{ email: "gerente14@jbretas.com", senha: "posto14", gerente: "Gerente P. GLÓRIA" }],
+    tanques: [
+      { id: "t14_1", nome: "TQ. 1", fuel: "ETANOL", capacidade: 30000 },
+      { id: "t14_2", nome: "TQ. 2", fuel: "GASOLINA COMUM", capacidade: 20000 },
+      { id: "t14_3", nome: "TQ. 3", fuel: "DIESEL S-10", capacidade: 10000 },
+    ],
+    combustiveis: [
+      { id: "etanol", label: "ETANOL" },
+      { id: "gasolina_comum", label: "GASOLINA COMUM" },
+      { id: "diesel_s_10", label: "DIESEL S-10" },
+    ],
+  },
+  "P15": {
+    nome: "P. ITAPOA",
+    users: [{ email: "gerente15@jbretas.com", senha: "posto15", gerente: "Gerente P. ITAPOA" }],
+    tanques: [
+      { id: "t15_1", nome: "TQ. 1", fuel: "DIESEL S-10", capacidade: 10000 },
+      { id: "t15_2", nome: "TQ. 2", fuel: "ETANOL", capacidade: 10000 },
+      { id: "t15_5", nome: "TQ. 5", fuel: "GASOLINA ADITIVADA", capacidade: 10000 },
+      { id: "t15_6", nome: "TQ. 6", fuel: "GASOLINA COMUM", capacidade: 30000 },
+    ],
+    combustiveis: [
+      { id: "diesel_s_10", label: "DIESEL S-10" },
+      { id: "etanol", label: "ETANOL" },
+      { id: "gasolina_aditivada", label: "GASOLINA ADITIVADA" },
+      { id: "gasolina_comum", label: "GASOLINA COMUM" },
+    ],
+  },
+  "P16": {
+    nome: "P. JA",
+    users: [{ email: "gerente16@jbretas.com", senha: "posto16", gerente: "Gerente P. JA" }],
+    tanques: [
+      { id: "t16_1", nome: "TQ. 1", fuel: "Gasolina Octapro", capacidade: 15000 },
+      { id: "t16_2", nome: "TQ. 2", fuel: "DIESEL S-10", capacidade: 15000 },
+      { id: "t16_3", nome: "TQ. 3", fuel: "ETANOL", capacidade: 15000 },
+      { id: "t16_4", nome: "TQ. 4", fuel: "GASOLINA ADITIVADA", capacidade: 15000 },
+      { id: "t16_5", nome: "TQ. 5", fuel: "GASOLINA COMUM", capacidade: 30000 },
+    ],
+    combustiveis: [
+      { id: "gasolina_octapro", label: "Gasolina Octapro" },
+      { id: "diesel_s_10", label: "DIESEL S-10" },
+      { id: "etanol", label: "ETANOL" },
+      { id: "gasolina_aditivada", label: "GASOLINA ADITIVADA" },
+      { id: "gasolina_comum", label: "GASOLINA COMUM" },
+    ],
+  },
+  "P17": {
+    nome: "P. JOCA",
+    users: [{ email: "gerente17@jbretas.com", senha: "posto17", gerente: "Gerente P. JOCA" }],
+    tanques: [
+      { id: "t17_1", nome: "TQ. 1", fuel: "GASOLINA COMUM", capacidade: 15000 },
+      { id: "t17_2", nome: "TQ. 2", fuel: "DIESEL S-10", capacidade: 15000 },
+      { id: "t17_3", nome: "TQ. 3", fuel: "ETANOL", capacidade: 15000 },
+      { id: "t17_4", nome: "TQ. 4", fuel: "ETANOL", capacidade: 15000 },
+    ],
+    combustiveis: [
+      { id: "gasolina_comum", label: "GASOLINA COMUM" },
+      { id: "diesel_s_10", label: "DIESEL S-10" },
+      { id: "etanol", label: "ETANOL" },
+    ],
+  },
+  "P18": {
+    nome: "P. LEANDRO",
+    users: [{ email: "gerente18@jbretas.com", senha: "posto18", gerente: "Gerente P. LEANDRO" }],
+    tanques: [
+      { id: "t18_1", nome: "TQ. 1", fuel: "DIESEL S-500", capacidade: 15000 },
+      { id: "t18_2", nome: "TQ. 2", fuel: "DIESEL S-10", capacidade: 15000 },
+      { id: "t18_3", nome: "TQ. 3", fuel: "ETANOL", capacidade: 30000 },
+      { id: "t18_4", nome: "TQ. 4", fuel: "GASOLINA COMUM", capacidade: 20000 },
+      { id: "t18_5", nome: "TQ. 5", fuel: "GASOLINA ADITIVADA", capacidade: 10000 },
+    ],
+    combustiveis: [
+      { id: "diesel_s_500", label: "DIESEL S-500" },
+      { id: "diesel_s_10", label: "DIESEL S-10" },
+      { id: "etanol", label: "ETANOL" },
+      { id: "gasolina_comum", label: "GASOLINA COMUM" },
+      { id: "gasolina_aditivada", label: "GASOLINA ADITIVADA" },
+    ],
+  },
+  "P19": {
+    nome: "P. LOURA EMPREENDIMENTOS",
+    users: [{ email: "gerente19@jbretas.com", senha: "posto19", gerente: "Gerente P. LOURA EMPREENDIMENTOS" }],
+    tanques: [
+      { id: "t19_1", nome: "TQ. 1", fuel: "ETANOL", capacidade: 30000 },
+      { id: "t19_2", nome: "TQ. 2", fuel: "DIESEL S-10", capacidade: 15000 },
+      { id: "t19_3", nome: "TQ. 3", fuel: "DIESEL S-500", capacidade: 15000 },
+      { id: "t19_4", nome: "TQ. 4", fuel: "GASOLINA COMUM", capacidade: 20000 },
+      { id: "t19_5", nome: "TQ. 5", fuel: "GASOLINA ADITIVADA", capacidade: 10000 },
+    ],
+    combustiveis: [
+      { id: "etanol", label: "ETANOL" },
+      { id: "diesel_s_10", label: "DIESEL S-10" },
+      { id: "diesel_s_500", label: "DIESEL S-500" },
+      { id: "gasolina_comum", label: "GASOLINA COMUM" },
+      { id: "gasolina_aditivada", label: "GASOLINA ADITIVADA" },
+    ],
+  },
+  "P20": {
+    nome: "P. MANGABEIRAS",
+    users: [{ email: "gerente20@jbretas.com", senha: "posto20", gerente: "Gerente P. MANGABEIRAS" }],
+    tanques: [
+      { id: "t20_1", nome: "TQ. 1", fuel: "GASOLINA COMUM", capacidade: 20000 },
+      { id: "t20_2", nome: "TQ. 2", fuel: "GASOLINA ADITIVADA", capacidade: 10000 },
+      { id: "t20_3", nome: "TQ. 3", fuel: "ETANOL", capacidade: 10000 },
+      { id: "t20_4", nome: "TQ. 4", fuel: "ETANOL", capacidade: 10000 },
+      { id: "t20_5", nome: "TQ. 5", fuel: "DIESEL S-10", capacidade: 10000 },
+    ],
+    combustiveis: [
+      { id: "gasolina_comum", label: "GASOLINA COMUM" },
+      { id: "gasolina_aditivada", label: "GASOLINA ADITIVADA" },
+      { id: "etanol", label: "ETANOL" },
+      { id: "diesel_s_10", label: "DIESEL S-10" },
+    ],
+  },
+  "P21": {
+    nome: "P. MIRAGEM JBRETAS",
+    users: [{ email: "gerente21@jbretas.com", senha: "posto21", gerente: "Gerente P. MIRAGEM JBRETAS" }],
+    tanques: [
+      { id: "t21_1", nome: "TQ. 1", fuel: "GASOLINA COMUM", capacidade: 30000 },
+      { id: "t21_2", nome: "TQ. 2", fuel: "DIESEL S-500", capacidade: 30000 },
+      { id: "t21_3", nome: "TQ. 3", fuel: "Gasolina Grid", capacidade: 15000 },
+      { id: "t21_4", nome: "TQ. 4", fuel: "DIESEL S-10", capacidade: 15000 },
+      { id: "t21_5", nome: "TQ. 5", fuel: "ETANOL", capacidade: 15000 },
+      { id: "t21_6", nome: "TQ. 6", fuel: "GASOLINA COMUM", capacidade: 15000 },
+    ],
+    combustiveis: [
+      { id: "gasolina_comum", label: "GASOLINA COMUM" },
+      { id: "diesel_s_500", label: "DIESEL S-500" },
+      { id: "gasolina_grid", label: "Gasolina Grid" },
+      { id: "diesel_s_10", label: "DIESEL S-10" },
+      { id: "etanol", label: "ETANOL" },
+    ],
+  },
+  "P22": {
+    nome: "PAIVA E PAIVA COMBUSTIVEL",
+    users: [{ email: "gerente22@jbretas.com", senha: "posto22", gerente: "Gerente PAIVA E PAIVA COMBUSTIVEL" }],
+    tanques: [
+      { id: "t22_1", nome: "TQ. 1", fuel: "GASOLINA COMUM", capacidade: 30000 },
+      { id: "t22_2", nome: "TQ. 2", fuel: "ETANOL", capacidade: 10000 },
+      { id: "t22_3", nome: "TQ. 3", fuel: "DIESEL S-500", capacidade: 20000 },
+      { id: "t22_4", nome: "TQ. 4", fuel: "GASOLINA ADITIVADA", capacidade: 10000 },
+      { id: "t22_5", nome: "TQ. 5", fuel: "DIESEL S-10", capacidade: 20000 },
+    ],
+    combustiveis: [
+      { id: "gasolina_comum", label: "GASOLINA COMUM" },
+      { id: "etanol", label: "ETANOL" },
+      { id: "diesel_s_500", label: "DIESEL S-500" },
+      { id: "gasolina_aditivada", label: "GASOLINA ADITIVADA" },
+      { id: "diesel_s_10", label: "DIESEL S-10" },
+    ],
+  },
+  "P23": {
+    nome: "P. PARAISO DAS AGUAS",
+    users: [{ email: "gerente23@jbretas.com", senha: "posto23", gerente: "Gerente P. PARAISO DAS AGUAS" }],
+    tanques: [
+      { id: "t23_1", nome: "TQ. 1", fuel: "ETANOL", capacidade: 15000 },
+      { id: "t23_2", nome: "TQ. 2", fuel: "GASOLINA COMUM", capacidade: 15000 },
+      { id: "t23_3", nome: "TQ. 3", fuel: "DIESEL S-10", capacidade: 30000 },
+      { id: "t23_4", nome: "TQ. 4", fuel: "GASOLINA COMUM", capacidade: 10000 },
+      { id: "t23_5", nome: "TQ. 5", fuel: "DIESEL S-500", capacidade: 20000 },
+    ],
+    combustiveis: [
+      { id: "etanol", label: "ETANOL" },
+      { id: "gasolina_comum", label: "GASOLINA COMUM" },
+      { id: "diesel_s_10", label: "DIESEL S-10" },
+      { id: "diesel_s_500", label: "DIESEL S-500" },
+    ],
+  },
+  "P24": {
+    nome: "P. PLANALTO",
+    users: [{ email: "gerente24@jbretas.com", senha: "posto24", gerente: "Gerente P. PLANALTO" }],
+    tanques: [
+      { id: "t24_1", nome: "TQ. 1", fuel: "GASOLINA ADITIVADA", capacidade: 10000 },
+      { id: "t24_2", nome: "TQ. 2", fuel: "GASOLINA COMUM", capacidade: 20000 },
+      { id: "t24_3", nome: "TQ. 3", fuel: "DIESEL S-500", capacidade: 10000 },
+      { id: "t24_4", nome: "TQ. 4", fuel: "ETANOL", capacidade: 20000 },
+      { id: "t24_5", nome: "TQ. 5", fuel: "GASOLINA COMUM", capacidade: 15000 },
+      { id: "t24_6", nome: "TQ. 6", fuel: "DIESEL S-10", capacidade: 15000 },
+    ],
+    combustiveis: [
+      { id: "gasolina_aditivada", label: "GASOLINA ADITIVADA" },
+      { id: "gasolina_comum", label: "GASOLINA COMUM" },
+      { id: "diesel_s_500", label: "DIESEL S-500" },
+      { id: "etanol", label: "ETANOL" },
+      { id: "diesel_s_10", label: "DIESEL S-10" },
+    ],
+  },
+  "P25": {
+    nome: "P. QUATRO RODAS",
+    users: [{ email: "gerente25@jbretas.com", senha: "posto25", gerente: "Gerente P. QUATRO RODAS" }],
+    tanques: [
+      { id: "t25_1", nome: "TQ. 1", fuel: "GASOLINA ADITIVADA", capacidade: 10000 },
+      { id: "t25_2", nome: "TQ. 2", fuel: "DIESEL S-10", capacidade: 10000 },
+      { id: "t25_3", nome: "TQ. 3", fuel: "ETANOL", capacidade: 10000 },
+      { id: "t25_4", nome: "TQ. 4", fuel: "GASOLINA COMUM", capacidade: 30000 },
+      { id: "t25_5", nome: "TQ. 5", fuel: "ETANOL", capacidade: 15000 },
+      { id: "t25_6", nome: "TQ. 6", fuel: "GNV", capacidade: 30000 },
+    ],
+    combustiveis: [
+      { id: "gasolina_aditivada", label: "GASOLINA ADITIVADA" },
+      { id: "diesel_s_10", label: "DIESEL S-10" },
+      { id: "etanol", label: "ETANOL" },
+      { id: "gasolina_comum", label: "GASOLINA COMUM" },
+      { id: "gnv", label: "GNV" },
+    ],
+  },
+  "P26": {
+    nome: "P. RODRIGO",
+    users: [{ email: "gerente26@jbretas.com", senha: "posto26", gerente: "Gerente P. RODRIGO" }],
+    tanques: [
+      { id: "t26_1", nome: "TQ. 1", fuel: "GASOLINA COMUM", capacidade: 15000 },
+      { id: "t26_2", nome: "TQ. 2", fuel: "ETANOL", capacidade: 15000 },
+      { id: "t26_3", nome: "TQ. 3", fuel: "GASOLINA COMUM", capacidade: 15000 },
+      { id: "t26_4", nome: "TQ. 4", fuel: "DIESEL S-500", capacidade: 15000 },
+      { id: "t26_5", nome: "TQ. 5", fuel: "GASOLINA ADITIVADA", capacidade: 15000 },
+      { id: "t26_6", nome: "TQ. 6", fuel: "DIESEL S-10", capacidade: 15000 },
+    ],
+    combustiveis: [
+      { id: "gasolina_comum", label: "GASOLINA COMUM" },
+      { id: "etanol", label: "ETANOL" },
+      { id: "diesel_s_500", label: "DIESEL S-500" },
+      { id: "gasolina_aditivada", label: "GASOLINA ADITIVADA" },
+      { id: "diesel_s_10", label: "DIESEL S-10" },
+    ],
+  },
+  "P27": {
+    nome: "P. SANTA INES MINAS - FILIAL",
+    users: [{ email: "gerente27@jbretas.com", senha: "posto27", gerente: "Gerente P. SANTA INES MINAS - FILIAL" }],
+    tanques: [
+      { id: "t27_1", nome: "TQ. 1", fuel: "ETANOL", capacidade: 15000 },
+      { id: "t27_2", nome: "TQ. 2", fuel: "GASOLINA ADITIVADA", capacidade: 15000 },
+      { id: "t27_3", nome: "TQ. 3", fuel: "ETANOL", capacidade: 15000 },
+      { id: "t27_4", nome: "TQ. 4", fuel: "DIESEL S-500", capacidade: 15000 },
+      { id: "t27_5", nome: "TQ. 5", fuel: "DIESEL S-10", capacidade: 15000 },
+      { id: "t27_6", nome: "TQ. 6", fuel: "GASOLINA COMUM", capacidade: 30000 },
+    ],
+    combustiveis: [
+      { id: "etanol", label: "ETANOL" },
+      { id: "gasolina_aditivada", label: "GASOLINA ADITIVADA" },
+      { id: "diesel_s_500", label: "DIESEL S-500" },
+      { id: "diesel_s_10", label: "DIESEL S-10" },
+      { id: "gasolina_comum", label: "GASOLINA COMUM" },
+    ],
+  },
+  "P28": {
+    nome: "P. SANTA INES MINAS",
+    users: [{ email: "gerente28@jbretas.com", senha: "posto28", gerente: "Gerente P. SANTA INES MINAS" }],
+    tanques: [
+      { id: "t28_1", nome: "TQ. 1", fuel: "ETANOL ADITIVADO", capacidade: 20000 },
+      { id: "t28_2", nome: "TQ. 2", fuel: "DIESEL S-10", capacidade: 10000 },
+      { id: "t28_3", nome: "TQ. 3", fuel: "GASOLINA COMUM", capacidade: 15000 },
+      { id: "t28_4", nome: "TQ. 4", fuel: "GASOLINA ADITIVADA", capacidade: 15000 },
+    ],
+    combustiveis: [
+      { id: "etanol_aditivado", label: "ETANOL ADITIVADO" },
+      { id: "diesel_s_10", label: "DIESEL S-10" },
+      { id: "gasolina_comum", label: "GASOLINA COMUM" },
+      { id: "gasolina_aditivada", label: "GASOLINA ADITIVADA" },
+    ],
+  },
+  "P29": {
+    nome: "P. SANTA MARIA",
+    users: [{ email: "gerente29@jbretas.com", senha: "posto29", gerente: "Gerente P. SANTA MARIA" }],
+    tanques: [
+      { id: "t29_1", nome: "TQ. 1", fuel: "ETANOL", capacidade: 30000 },
+      { id: "t29_2", nome: "TQ. 2", fuel: "Gasolina Grid", capacidade: 15000 },
+      { id: "t29_3", nome: "TQ. 3", fuel: "GASOLINA COMUM", capacidade: 15000 },
+      { id: "t29_4", nome: "TQ. 4", fuel: "DIESEL S-10", capacidade: 15000 },
+    ],
+    combustiveis: [
+      { id: "etanol", label: "ETANOL" },
+      { id: "gasolina_grid", label: "Gasolina Grid" },
+      { id: "gasolina_comum", label: "GASOLINA COMUM" },
+      { id: "diesel_s_10", label: "DIESEL S-10" },
+    ],
+  },
+  "P30": {
+    nome: "P. SAO BERNARDO",
+    users: [{ email: "gerente30@jbretas.com", senha: "posto30", gerente: "Gerente P. SAO BERNARDO" }],
+    tanques: [
+      { id: "t30_1", nome: "TQ. 1", fuel: "GASOLINA COMUM", capacidade: 30000 },
+      { id: "t30_2", nome: "TQ. 2", fuel: "GASOLINA ADITIVADA", capacidade: 15000 },
+      { id: "t30_3", nome: "TQ. 3", fuel: "ETANOL", capacidade: 20000 },
+    ],
+    combustiveis: [
+      { id: "gasolina_comum", label: "GASOLINA COMUM" },
+      { id: "gasolina_aditivada", label: "GASOLINA ADITIVADA" },
+      { id: "etanol", label: "ETANOL" },
+    ],
+  },
+  "P31": {
+    nome: "P. SAO LUIZ RL",
+    users: [{ email: "gerente31@jbretas.com", senha: "posto31", gerente: "Gerente P. SAO LUIZ RL" }],
+    tanques: [
+      { id: "t31_1", nome: "TQ. 1", fuel: "GASOLINA COMUM", capacidade: 20000 },
+      { id: "t31_2", nome: "TQ. 2", fuel: "DIESEL S-10", capacidade: 10000 },
+      { id: "t31_3", nome: "TQ. 3", fuel: "ETANOL", capacidade: 15000 },
+      { id: "t31_4", nome: "TQ. 4", fuel: "DIESEL S-500", capacidade: 15000 },
+    ],
+    combustiveis: [
+      { id: "gasolina_comum", label: "GASOLINA COMUM" },
+      { id: "diesel_s_10", label: "DIESEL S-10" },
+      { id: "etanol", label: "ETANOL" },
+      { id: "diesel_s_500", label: "DIESEL S-500" },
+    ],
+  },
+  "P32": {
+    nome: "P. SERENA COLIBRI",
+    users: [{ email: "gerente32@jbretas.com", senha: "posto32", gerente: "Gerente P. SERENA COLIBRI" }],
+    tanques: [
+      { id: "t32_1", nome: "TQ. 1", fuel: "GASOLINA ADITIVADA", capacidade: 15000 },
+      { id: "t32_2", nome: "TQ. 2", fuel: "ETANOL ADITIVADO", capacidade: 15000 },
+      { id: "t32_3", nome: "TQ. 3", fuel: "GASOLINA COMUM", capacidade: 30000 },
+      { id: "t32_4", nome: "TQ. 4", fuel: "DIESEL S-10", capacidade: 15000 },
+      { id: "t32_5", nome: "TQ. 5", fuel: "DIESEL S-500", capacidade: 15000 },
+    ],
+    combustiveis: [
+      { id: "gasolina_aditivada", label: "GASOLINA ADITIVADA" },
+      { id: "etanol_aditivado", label: "ETANOL ADITIVADO" },
+      { id: "gasolina_comum", label: "GASOLINA COMUM" },
+      { id: "diesel_s_10", label: "DIESEL S-10" },
+      { id: "diesel_s_500", label: "DIESEL S-500" },
+    ],
+  },
+  "P33": {
+    nome: "P. TOPAZIO",
+    users: [{ email: "gerente33@jbretas.com", senha: "posto33", gerente: "Gerente P. TOPAZIO" }],
+    tanques: [
+      { id: "t33_1", nome: "TQ. 1", fuel: "ETANOL", capacidade: 15000 },
+      { id: "t33_2", nome: "TQ. 2", fuel: "ETANOL", capacidade: 15000 },
+      { id: "t33_3", nome: "TQ. 3", fuel: "GASOLINA ADITIVADA", capacidade: 15000 },
+      { id: "t33_4", nome: "TQ. 4", fuel: "DIESEL S-10", capacidade: 15000 },
+      { id: "t33_5", nome: "TQ. 5", fuel: "GASOLINA COMUM", capacidade: 30000 },
+    ],
+    combustiveis: [
+      { id: "etanol", label: "ETANOL" },
+      { id: "gasolina_aditivada", label: "GASOLINA ADITIVADA" },
+      { id: "diesel_s_10", label: "DIESEL S-10" },
+      { id: "gasolina_comum", label: "GASOLINA COMUM" },
+    ],
+  },
+  "P34": {
+    nome: "P. TRANCOSO",
+    users: [{ email: "gerente34@jbretas.com", senha: "posto34", gerente: "Gerente P. TRANCOSO" }],
+    tanques: [
+      { id: "t34_1", nome: "TQ. 1", fuel: "GASOLINA COMUM", capacidade: 30000 },
+      { id: "t34_2", nome: "TQ. 2", fuel: "ETANOL ADITIVADO", capacidade: 15000 },
+      { id: "t34_3", nome: "TQ. 3", fuel: "GASOLINA ADITIVADA", capacidade: 15000 },
+      { id: "t34_4", nome: "TQ. 4", fuel: "DIESEL S-10", capacidade: 15000 },
+      { id: "t34_5", nome: "TQ. 5", fuel: "GASOLINA COMUM", capacidade: 15000 },
+    ],
+    combustiveis: [
+      { id: "gasolina_comum", label: "GASOLINA COMUM" },
+      { id: "etanol_aditivado", label: "ETANOL ADITIVADO" },
+      { id: "gasolina_aditivada", label: "GASOLINA ADITIVADA" },
+      { id: "diesel_s_10", label: "DIESEL S-10" },
+    ],
+  },
+  "P35": {
+    nome: "P. TUNEL",
+    users: [{ email: "gerente35@jbretas.com", senha: "posto35", gerente: "Gerente P. TUNEL" }],
+    tanques: [
+      { id: "t35_1", nome: "TQ. 1", fuel: "ETANOL", capacidade: 30000 },
+      { id: "t35_2", nome: "TQ. 2", fuel: "GASOLINA ADITIVADA", capacidade: 15000 },
+      { id: "t35_3", nome: "TQ. 3", fuel: "GASOLINA COMUM", capacidade: 15000 },
+    ],
+    combustiveis: [
+      { id: "etanol", label: "ETANOL" },
+      { id: "gasolina_aditivada", label: "GASOLINA ADITIVADA" },
+      { id: "gasolina_comum", label: "GASOLINA COMUM" },
+    ],
+  },
+  "P36": {
+    nome: "P. URBANO FERRAZ",
+    users: [{ email: "gerente36@jbretas.com", senha: "posto36", gerente: "Gerente P. URBANO FERRAZ" }],
+    tanques: [
+      { id: "t36_1", nome: "TQ. 1", fuel: "GASOLINA COMUM", capacidade: 30000 },
+      { id: "t36_2", nome: "TQ. 2", fuel: "Gasolina Premium Podium", capacidade: 15000 },
+      { id: "t36_3", nome: "TQ. 3", fuel: "GASOLINA ADITIVADA", capacidade: 15000 },
+      { id: "t36_4", nome: "TQ. 4", fuel: "GASOLINA COMUM", capacidade: 15000 },
+      { id: "t36_5", nome: "TQ. 5", fuel: "DIESEL S-10", capacidade: 15000 },
+      { id: "t36_6", nome: "TQ. 6", fuel: "ETANOL", capacidade: 30000 },
+      { id: "t36_136", nome: "TQ. 136", fuel: "GNV", capacidade: 90000 },
+    ],
+    combustiveis: [
+      { id: "gasolina_comum", label: "GASOLINA COMUM" },
+      { id: "gasolina_premium_podium", label: "Gasolina Premium Podium" },
+      { id: "gasolina_aditivada", label: "GASOLINA ADITIVADA" },
+      { id: "diesel_s_10", label: "DIESEL S-10" },
+      { id: "etanol", label: "ETANOL" },
+      { id: "gnv", label: "GNV" },
+    ],
+  },
+  "P37": {
+    nome: "P. BIANCA",
+    users: [{ email: "gerente37@jbretas.com", senha: "posto37", gerente: "Gerente P. BIANCA" }],
+    tanques: [
+      { id: "t37_1", nome: "TQ. 1", fuel: "GASOLINA COMUM", capacidade: 10000 },
+      { id: "t37_2", nome: "TQ. 2", fuel: "ETANOL", capacidade: 10000 },
+      { id: "t37_3", nome: "TQ. 3", fuel: "GASOLINA ADITIVADA", capacidade: 10000 },
+      { id: "t37_4", nome: "TQ. 4", fuel: "GASOLINA COMUM", capacidade: 15000 },
+      { id: "t37_5", nome: "TQ. 5", fuel: "DIESEL S-10", capacidade: 15000 },
+      { id: "t37_6", nome: "TQ. 6", fuel: "DIESEL S-500", capacidade: 15000 },
+      { id: "t37_7", nome: "TQ. 7", fuel: "DIESEL S-500", capacidade: 15000 },
+    ],
+    combustiveis: [
+      { id: "gasolina_comum", label: "GASOLINA COMUM" },
+      { id: "etanol", label: "ETANOL" },
+      { id: "gasolina_aditivada", label: "GASOLINA ADITIVADA" },
+      { id: "diesel_s_10", label: "DIESEL S-10" },
+      { id: "diesel_s_500", label: "DIESEL S-500" },
+    ],
+  },
 };
 
 /* tabela de litros por cm (simplificada) */
