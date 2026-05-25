@@ -1972,7 +1972,7 @@ document.addEventListener("click", function(e) {
     <!-- Foto -->
     <div class="coleta-card">
       <div class="coleta-section-title">📷 Foto (Obrigatória)</div>
-      <div class="foto-area" id="foto-area" onclick="abrirCamera()">
+      <div class="foto-area" id="foto-area" onclick="abrirCamera()" style="cursor:pointer;">
         <img id="foto-preview" class="foto-preview" src="" alt="preview">
         <div class="foto-placeholder" id="foto-placeholder">
           <span>📷</span>
@@ -1980,6 +1980,11 @@ document.addEventListener("click", function(e) {
         </div>
       </div>
       <input type="file" id="foto-input" accept="image/*" style="display:none" onchange="onFotoSelected(this)">
+<input type="file" id="galeria-input" accept="image/*" style="display:none" onchange="onFotoSelected(this)">
+<div style="display:flex;gap:8px;margin-top:10px;">
+  <button onclick="document.getElementById('foto-input').click()" style="flex:1;padding:10px;background:var(--surface2);border:1px solid var(--border);border-radius:10px;color:var(--text);font-size:0.85rem;cursor:pointer;">📷 Câmera</button>
+  <button onclick="document.getElementById('galeria-input').click()" style="flex:1;padding:10px;background:var(--surface2);border:1px solid var(--border);border-radius:10px;color:var(--text);font-size:0.85rem;cursor:pointer;">🖼️ Galeria</button>
+</div>
     </div>
   </div>
 
