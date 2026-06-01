@@ -1967,6 +1967,9 @@ function salvarColeta() {
   const data = now.toLocaleDateString('pt-BR');
   const hora = now.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
 
+  /* DEBUG — mostra no console o que está sendo enviado */
+  console.log('Preços coletados:', JSON.stringify(precos));
+
   /* Constrói payload compatível com o histórico e Sheets */
   const payload = {
     tipo: 'coleta_preco',
