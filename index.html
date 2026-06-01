@@ -1812,8 +1812,11 @@ function initPrecoInput(el) {
 function getPrecoValor(id) {
   const el = document.getElementById(id);
   if (!el) return '';
-  if (el._getValor) return el._getValor().toFixed(2);
-  return el.dataset.valor || '';
+  /* Lê centavos direto do dataset — sempre atualizado pelo sync() */
+  const val = el._getValor ? el._getValor() : parseFloat(el.dataset.valor || '0');
+  /* Retorna vazio se zero (campo não preenchido) */
+  if (!val || val === 0) return '';
+  return val.toFixed(2);
 }
 
 /* ===================== COLETA DE PREÇOS ===================== */
