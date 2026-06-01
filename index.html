@@ -1736,34 +1736,34 @@ function getColetaCampos(postoKey) {
    decimal com vírgula, 3 casas (ex: 5,690 → pressiona 5 → "0,005" → "0,056" → "5,690")
    ===================================================================== */
 function initPrecoInput(el) {
-  /* estado interno em centavos (inteiro) */
+  /* estado interno em centavos (inteiro) — 2 casas decimais */
   let centavos = 0;
 
   function render() {
-    /* formata: X,XXX  (3 decimais) */
-    const reais  = Math.floor(centavos / 1000);
-    const dec    = centavos % 1000;
-    const decStr = String(dec).padStart(3, '0');
+    /* formata: X,XX  (2 decimais) */
+    const reais  = Math.floor(centavos / 100);
+    const dec    = centavos % 100;
+    const decStr = String(dec).padStart(2, '0');
     /* separador de milhar */
     const reaisStr = reais.toLocaleString('pt-BR');
     el.value = `${reaisStr},${decStr}`;
   }
 
   function getValorNumerico() {
-    return centavos / 1000;
+    return centavos / 100;
   }
 
   /* guarda valor numérico no dataset para leitura no save */
   function sync() {
-    el.dataset.valor = getValorNumerico().toFixed(3);
+    el.dataset.valor = getValorNumerico().toFixed(2);
   }
 
   el.addEventListener('keydown', (e) => {
     if (e.key >= '0' && e.key <= '9') {
       e.preventDefault();
       const digito = parseInt(e.key);
-      /* shift left: máximo 7 dígitos = R$ 9.999,999 */
-      if (centavos < 9999999) {
+      /* shift left: máximo 6 dígitos = R$ 9.999,99 */
+      if (centavos < 999999) {
         centavos = centavos * 10 + digito;
       }
       render();
@@ -1787,7 +1787,7 @@ function initPrecoInput(el) {
     /* Se colar algo, tenta converter */
     const raw = el.value.replace(/[^\d]/g, '');
     if (raw) {
-      centavos = parseInt(raw.slice(-7) || '0');
+      centavos = parseInt(raw.slice(-6) || '0');
     } else {
       centavos = 0;
     }
@@ -1812,7 +1812,7 @@ function initPrecoInput(el) {
 function getPrecoValor(id) {
   const el = document.getElementById(id);
   if (!el) return '';
-  if (el._getValor) return el._getValor().toFixed(3);
+  if (el._getValor) return el._getValor().toFixed(2);
   return el.dataset.valor || '';
 }
 
@@ -1848,7 +1848,7 @@ function buildPrecoGrid(campos) {
     div.className = 'preco-item';
     div.innerHTML = `
       <label>${c.label}</label>
-      <input type="text" id="preco-${c.id}" class="preco-input" inputmode="numeric" autocomplete="off" placeholder="0,000">
+      <input type="text" id="preco-${c.id}" class="preco-input" inputmode="numeric" autocomplete="off" placeholder="0,00">
     `;
     grid.appendChild(div);
     /* Inicializa formato monetário bancário */
@@ -2000,7 +2000,7 @@ function salvarColeta() {
     document.getElementById('posto-alvo-select').value = '';
     coletaCamposAtivos.forEach(c => {
       const el = document.getElementById('preco-' + c.id);
-      if (el) { el.value = '0,000'; el.dataset.valor = '0.000'; if (el._getValor) initPrecoInput(el); }
+      if (el) { el.value = '0,00'; el.dataset.valor = '0.00'; if (el._getValor) initPrecoInput(el); }
     });
     buildPrecoGrid(coletaCamposAtivos); /* reinicia inputs */
     fotoBase64 = null;
