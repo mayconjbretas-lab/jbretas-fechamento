@@ -606,6 +606,9 @@
   .chip-s10 { background: #ff6b6b; }
   .chip-s500 { background: #c77dff; }
   .chip-lub { background: #ff9f1c; }
+  .remember-row{display:flex;align-items:center;gap:8px;margin-top:.75rem}
+  .remember-checkbox{width:16px;height:16px;accent-color:var(--accent);cursor:pointer}
+  .remember-label{font-size:.78rem;color:var(--text3);font-family:var(--mono);cursor:pointer}
 
 /* ===================== COLETA DE PREÇOS ===================== */
 .coleta-screen { display: none; }
@@ -676,6 +679,11 @@
       <input class="field-input" type="password" id="login-senha" placeholder="••••••••" autocomplete="current-password">
     </div>
 
+    <div class="remember-row">
+      <input class="remember-checkbox" type="checkbox" id="lembrar-me">
+      <label class="remember-label" for="lembrar-me">Lembrar de mim</label>
+    </div>
+    
     <button class="btn-primary" onclick="doLogin()">ENTRAR</button>
     <div class="login-error" id="login-error">E-mail ou senha incorretos.</div>
   </div>
@@ -1477,6 +1485,11 @@ function doLogin() {
   document.getElementById('login-error').style.display = 'none';
   currentUser = foundUser;
   currentPosto = foundPosto;
+  if(document.getElementById('lembrar-me').checked){
+    localStorage.setItem('jbretas_login',JSON.stringify({email,senha}));
+  } else {
+    localStorage.removeItem('jbretas_login');
+  }
   initApp();
   showScreen('app');
 }
@@ -1484,6 +1497,18 @@ function doLogin() {
 document.getElementById('login-senha').addEventListener('keydown', e => {
   if (e.key === 'Enter') doLogin();
 });
+
+  (function(){
+  const s = localStorage.getItem('jbretas_login');
+  if(s){
+    try{
+      const d = JSON.parse(s);
+      document.getElementById('login-email').value = d.email;
+      document.getElementById('login-senha').value = d.senha;
+      document.getElementById('lembrar-me').checked = true;
+    }catch(e){}
+  }
+})();
 
 function doLogout() {
   currentUser = null;
