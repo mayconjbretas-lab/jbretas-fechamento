@@ -155,6 +155,30 @@
 
   .field-input::placeholder { color: var(--text3); }
 
+  /* ===== CAMPO SENHA COM OLHO ===== */
+  .senha-wrap {
+    position: relative;
+  }
+  .senha-wrap .field-input {
+    padding-right: 3rem;
+  }
+  .btn-olho {
+    position: absolute;
+    right: 0.75rem;
+    top: 50%;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: var(--text3);
+    font-size: 1.1rem;
+    padding: 0;
+    line-height: 1;
+    transition: color 0.2s;
+  }
+  .btn-olho:hover { color: var(--accent); }
+  /* ===== /CAMPO SENHA COM OLHO ===== */
+
   /* ===== LEMBRAR DE MIM ===== */
   .remember-row {
     display: flex;
@@ -859,7 +883,10 @@
 
     <div class="field-group">
       <label class="field-label">Senha</label>
-      <input class="field-input" type="password" id="login-senha" placeholder="••••••••" autocomplete="current-password">
+      <div class="senha-wrap">
+        <input class="field-input" type="password" id="login-senha" placeholder="••••••••" autocomplete="current-password">
+        <button class="btn-olho" type="button" onclick="toggleSenha()" id="btn-olho" title="Mostrar/ocultar senha">👁</button>
+      </div>
     </div>
 
     <!-- ===== LEMBRAR DE MIM ===== -->
@@ -1707,8 +1734,10 @@ function fecharModalSenha() {
 }
 
 // Fecha modal ao clicar fora do card
-document.getElementById('modal-senha').addEventListener('click', function(e) {
-  if (e.target === this) fecharModalSenha();
+document.addEventListener('DOMContentLoaded', function() {
+  document.getElementById('modal-senha').addEventListener('click', function(e) {
+    if (e.target === this) fecharModalSenha();
+  });
 });
 
 async function enviarSenha() {
@@ -1777,6 +1806,20 @@ function exibirMsgModal(texto, tipo) {
   msg.style.display = 'block';
 }
 /* ===== /ESQUECI MINHA SENHA ===== */
+
+/* ===== TOGGLE OLHO SENHA ===== */
+function toggleSenha() {
+  const input = document.getElementById('login-senha');
+  const btn   = document.getElementById('btn-olho');
+  if (input.type === 'password') {
+    input.type = 'text';
+    btn.textContent = '🙈';
+  } else {
+    input.type = 'password';
+    btn.textContent = '👁';
+  }
+}
+/* ===== /TOGGLE OLHO SENHA ===== */
 
 function doLogin() {
   const email = document.getElementById('login-email').value.trim().toLowerCase();
