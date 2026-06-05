@@ -12,6 +12,17 @@
   <meta name="apple-mobile-web-app-title" content="JBRETAS">
   <link rel="apple-touch-icon" href="icon-192.png">
 <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+
+<!-- ===== EMAILJS SDK ===== -->
+<script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+<script>
+  /* Configure suas chaves em https://www.emailjs.com (gratuito, 200 e-mails/mês)
+     1. Crie Service (Gmail/Outlook) → anote SERVICE_ID
+     2. Crie Template com variáveis {{to_email}}, {{to_name}}, {{senha}}, {{posto}} → anote TEMPLATE_ID
+     3. Account → anote PUBLIC_KEY
+     Substitua os valores nas constantes JS abaixo. */
+  (function(){ emailjs.init({ publicKey: 'SUA_PUBLIC_KEY' }); })();
+</script>
 <style>
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -174,6 +185,127 @@
 
   .remember-label:hover { color: var(--text2); }
   /* ===== /LEMBRAR DE MIM ===== */
+
+  /* ===== ESQUECI MINHA SENHA ===== */
+  .forgot-link {
+    display: block;
+    text-align: right;
+    font-size: 0.72rem;
+    color: var(--text3);
+    font-family: var(--mono);
+    letter-spacing: 0.08em;
+    cursor: pointer;
+    margin-top: 0.5rem;
+    margin-bottom: 0.25rem;
+    transition: color 0.2s;
+    background: none;
+    border: none;
+    padding: 0;
+    width: 100%;
+  }
+  .forgot-link:hover { color: var(--accent); }
+
+  .modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.7);
+    z-index: 500;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem;
+    backdrop-filter: blur(4px);
+  }
+  .modal-overlay.active { display: flex; }
+
+  .modal-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    padding: 2rem;
+    width: 100%;
+    max-width: 400px;
+    position: relative;
+    animation: modalIn 0.25s ease;
+  }
+
+  @keyframes modalIn {
+    from { transform: scale(0.95); opacity: 0; }
+    to   { transform: scale(1);    opacity: 1; }
+  }
+
+  .modal-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, var(--info), transparent);
+  }
+
+  .modal-title {
+    font-family: var(--mono);
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--info);
+    letter-spacing: 0.06em;
+    margin-bottom: 0.4rem;
+  }
+
+  .modal-sub {
+    font-size: 0.78rem;
+    color: var(--text3);
+    line-height: 1.5;
+    margin-bottom: 1.25rem;
+  }
+
+  .btn-modal-send {
+    width: 100%;
+    background: var(--info);
+    color: #fff;
+    border: none;
+    border-radius: var(--radius);
+    font-family: var(--mono);
+    font-size: 0.82rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    padding: 0.82rem;
+    cursor: pointer;
+    margin-top: 0.5rem;
+    transition: opacity 0.2s, transform 0.1s;
+  }
+  .btn-modal-send:hover { opacity: 0.88; }
+  .btn-modal-send:active { transform: scale(0.98); }
+  .btn-modal-send:disabled { opacity: 0.5; cursor: not-allowed; }
+
+  .btn-modal-cancel {
+    width: 100%;
+    background: transparent;
+    border: 1px solid var(--border2);
+    border-radius: var(--radius);
+    color: var(--text3);
+    font-family: var(--mono);
+    font-size: 0.78rem;
+    padding: 0.7rem;
+    cursor: pointer;
+    margin-top: 0.5rem;
+    transition: border-color 0.2s, color 0.2s;
+  }
+  .btn-modal-cancel:hover { border-color: var(--danger); color: var(--danger); }
+
+  .modal-msg {
+    font-size: 0.78rem;
+    font-family: var(--mono);
+    margin-top: 0.75rem;
+    display: none;
+    padding: 8px 12px;
+    border-radius: var(--radius);
+    line-height: 1.5;
+    white-space: pre-line;
+  }
+  .modal-msg.ok  { background: var(--accent-dim); color: var(--accent); border: 1px solid rgba(0,229,160,.2); }
+  .modal-msg.err { background: rgba(255,77,109,.08); color: var(--danger); border: 1px solid rgba(255,77,109,.2); }
+  /* ===== /ESQUECI MINHA SENHA ===== */
 
   .btn-primary {
     width: 100%;
@@ -659,8 +791,31 @@
 
 .preco-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
 .preco-item label { display: block; font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.08em; color: var(--text3); margin-bottom: 4px; font-family: var(--mono); }
-.preco-input { width: 100%; background: var(--surface2); border: 1px solid var(--border); border-radius: 10px; color: var(--text); padding: 10px 14px; font-size: 1rem; text-align: center; }
-.preco-input:focus { outline: none; border-color: var(--accent); }
+/* ===== CALCULADORA DE PREÇOS ===== */
+.preco-input {
+  width: 100%;
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  color: var(--text);
+  padding: 12px 14px;
+  font-size: 1.15rem;
+  text-align: right;
+  font-family: var(--mono);
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  caret-color: transparent;
+  cursor: pointer;
+  user-select: none;
+  -webkit-user-select: none;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+.preco-input:focus {
+  outline: none;
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px var(--accent-dim);
+}
+/* ===== /CALCULADORA DE PREÇOS ===== */
 
 .geo-row { display: flex; align-items: center; gap: 10px; padding: 10px 0; }
 .geo-status { font-size: 0.8rem; color: var(--text3); flex: 1; }
@@ -715,7 +870,25 @@
     <!-- ===== /LEMBRAR DE MIM ===== -->
 
     <button class="btn-primary" onclick="doLogin()">ENTRAR</button>
+    <button class="forgot-link" onclick="abrirModalSenha()">Esqueci minha senha</button>
     <div class="login-error" id="login-error">E-mail ou senha incorretos.</div>
+  </div>
+</div>
+
+<!-- ===== MODAL ESQUECI MINHA SENHA ===== -->
+<div class="modal-overlay" id="modal-senha">
+  <div class="modal-card">
+    <div class="modal-title">🔑 Recuperar Senha</div>
+    <div class="modal-sub">
+      Digite o e-mail cadastrado no sistema. Se encontrado, você receberá sua senha por e-mail.
+    </div>
+    <div class="field-group">
+      <label class="field-label">E-mail cadastrado</label>
+      <input class="field-input" type="email" id="recuperar-email" placeholder="seu@email.com" autocomplete="email">
+    </div>
+    <button class="btn-modal-send" id="btn-recuperar" onclick="enviarSenha()">📧 ENVIAR SENHA POR E-MAIL</button>
+    <button class="btn-modal-cancel" onclick="fecharModalSenha()">CANCELAR</button>
+    <div class="modal-msg" id="modal-msg"></div>
   </div>
 </div>
 
@@ -1507,6 +1680,104 @@ let currentPosto = null;
   } catch(e) {}
 })();
 
+/* ===================== ESQUECI MINHA SENHA — EmailJS =====================
+   Configure suas chaves após criar conta em https://www.emailjs.com
+   Template sugerido:
+     Para: {{to_email}}
+     Assunto: JBRETAS — Sua senha de acesso
+     Corpo: Olá {{to_name}}, sua senha é: {{senha}} — Posto: {{posto}}
+   ======================================================================== */
+const EMAILJS_SERVICE_ID  = 'SEU_SERVICE_ID';   // ex: 'service_abc123'
+const EMAILJS_TEMPLATE_ID = 'SEU_TEMPLATE_ID';  // ex: 'template_xyz456'
+// PUBLIC_KEY já configurada no <head>
+
+function abrirModalSenha() {
+  document.getElementById('modal-senha').classList.add('active');
+  document.getElementById('recuperar-email').value = '';
+  const msg = document.getElementById('modal-msg');
+  msg.style.display = 'none';
+  msg.className = 'modal-msg';
+  document.getElementById('btn-recuperar').disabled = false;
+  document.getElementById('btn-recuperar').textContent = '📧 ENVIAR SENHA POR E-MAIL';
+  setTimeout(() => document.getElementById('recuperar-email').focus(), 100);
+}
+
+function fecharModalSenha() {
+  document.getElementById('modal-senha').classList.remove('active');
+}
+
+// Fecha modal ao clicar fora do card
+document.getElementById('modal-senha').addEventListener('click', function(e) {
+  if (e.target === this) fecharModalSenha();
+});
+
+async function enviarSenha() {
+  const email = document.getElementById('recuperar-email').value.trim().toLowerCase();
+  const btn   = document.getElementById('btn-recuperar');
+  const msg   = document.getElementById('modal-msg');
+
+  msg.style.display = 'none';
+
+  if (!email) {
+    exibirMsgModal('Por favor, informe seu e-mail.', 'err');
+    return;
+  }
+
+  // Procura o usuário no DB
+  let foundUser = null;
+  let foundPosto = null;
+  for (const key of Object.keys(DB)) {
+    const posto = DB[key];
+    const user  = posto.users && posto.users.find(u => u.email.toLowerCase() === email);
+    if (user) { foundUser = user; foundPosto = posto; break; }
+  }
+
+  if (!foundUser) {
+    exibirMsgModal('E-mail não encontrado no sistema.', 'err');
+    return;
+  }
+
+  // Modo teste: se EmailJS não configurado, exibe senha na tela
+  if (EMAILJS_SERVICE_ID === 'SEU_SERVICE_ID') {
+    exibirMsgModal(
+      '⚠ EmailJS não configurado.
+Senha encontrada: ' + foundUser.senha + '
+(Configure o EmailJS para envio real.)',
+      'err'
+    );
+    return;
+  }
+
+  btn.disabled = true;
+  btn.textContent = '⏳ Enviando...';
+
+  try {
+    await emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, {
+      to_email: foundUser.email,
+      to_name:  foundUser.gerente,
+      senha:    foundUser.senha,
+      posto:    foundPosto.nome,
+    });
+    exibirMsgModal('✅ E-mail enviado com sucesso!
+Verifique sua caixa de entrada.', 'ok');
+    btn.textContent = '✅ ENVIADO';
+    setTimeout(fecharModalSenha, 3000);
+  } catch (err) {
+    console.error('EmailJS erro:', err);
+    exibirMsgModal('Erro ao enviar e-mail. Tente novamente ou contate o administrador.', 'err');
+    btn.disabled = false;
+    btn.textContent = '📧 ENVIAR SENHA POR E-MAIL';
+  }
+}
+
+function exibirMsgModal(texto, tipo) {
+  const msg = document.getElementById('modal-msg');
+  msg.textContent = texto;
+  msg.className   = 'modal-msg ' + tipo;
+  msg.style.display = 'block';
+}
+/* ===== /ESQUECI MINHA SENHA ===== */
+
 function doLogin() {
   const email = document.getElementById('login-email').value.trim().toLowerCase();
   const senha = document.getElementById('login-senha').value;
@@ -1776,6 +2047,81 @@ const CONCORRENTES = {
 };
 
 /* ===================== COLETA DE PREÇOS ===================== */
+/* =====================================================================
+   CALCULADORA DE PREÇOS — coleta de preços
+   Comportamento: dígitos acumulam da direita para a esquerda.
+   Exemplos: 5→"0,05"  56→"0,56"  569→"5,69"  5699→"56,99"
+   Máximo 4 dígitos = R$ 99,99
+   Backspace → apaga último dígito
+   Delete / Escape → zera
+   ===================================================================== */
+
+const PRECO_IDS = ['preco-et', 'preco-gc', 'preco-ga', 'preco-s10', 'preco-s500'];
+
+function initPrecoInputs() {
+  PRECO_IDS.forEach(id => {
+    const el = document.getElementById(id);
+    if (!el) return;
+
+    // estado interno: string de dígitos puros
+    el._digitos = '';
+    el.value = '0,000';
+    el.setAttribute('readonly', true);
+
+    el.addEventListener('keydown', precoKeyHandler);
+    el.addEventListener('touchend', e => { e.preventDefault(); el.focus(); });
+    el.addEventListener('click', () => el.focus());
+  });
+}
+
+function precoKeyHandler(e) {
+  const el = e.target;
+
+  if (e.key >= '0' && e.key <= '9') {
+    e.preventDefault();
+    if (el._digitos.length >= 4) return;   // máx 4 dígitos = 99,99
+    el._digitos += e.key;
+    renderPreco(el);
+
+  } else if (e.key === 'Backspace') {
+    e.preventDefault();
+    el._digitos = el._digitos.slice(0, -1);
+    renderPreco(el);
+
+  } else if (e.key === 'Delete' || e.key === 'Escape') {
+    e.preventDefault();
+    el._digitos = '';
+    renderPreco(el);
+  }
+  // Ignora qualquer outra tecla (letras, setas, etc.)
+}
+
+function renderPreco(el) {
+  const d = el._digitos;
+  if (!d) { el.value = '0,000'; return; }
+  // Completa com zeros à esquerda até ter ao menos 3 casas (centavos)
+  const pad = d.padStart(3, '0');
+  const intPart = pad.slice(0, -3).replace(/^0+/, '') || '0';
+  const decPart = pad.slice(-3);
+  el.value = intPart + ',' + decPart;
+}
+
+function getPrecoStr(el) {
+  // Retorna o valor formatado ou '-' se zero/vazio
+  if (!el || !el._digitos || el._digitos === '') return '-';
+  return el.value; // ex: "5,69"
+}
+
+function resetPrecoInputs() {
+  PRECO_IDS.forEach(id => {
+    const el = document.getElementById(id);
+    if (!el) return;
+    el._digitos = '';
+    el.value = '0,000';
+  });
+}
+/* ===== /CALCULADORA DE PREÇOS ===== */
+
 let geoData = null;
 let fotoBase64 = null;
 const SHEETS_URL_COLETA = 'https://script.google.com/macros/s/AKfycbwoWCevroQ4G0rk-rMgdHIkF3wgZsAgjM-22oxGGGYcElreUGgObV5ACAecHIbRfqG2/exec';
@@ -1797,6 +2143,8 @@ function abrirColeta() {
   renderHistorico();
   /* Ajusta label do último campo de preço conforme o posto */
   ajustarCampoColeta();
+  /* Inicializa a calculadora de preços */
+  initPrecoInputs();
 }
 
 /* ===== NOVIDADE: troca label do campo s500 para P. JA ===== */
@@ -1917,16 +2265,18 @@ function salvarColeta() {
   if (!postoAlvo) { showToast('Atenção', 'Selecione o posto alvo!'); return; }
   if (!fotoBase64) { showToast('Atenção', 'A foto é obrigatória!'); return; }
 
-  const et   = document.getElementById('preco-et').value;
-  const gc   = document.getElementById('preco-gc').value;
-  const ga   = document.getElementById('preco-ga').value;
-  const s10  = document.getElementById('preco-s10').value;
-  const s500Val = document.getElementById('preco-s500').value;
+  /* Lê valores via calculadora de preços */
+  const et      = getPrecoStr(document.getElementById('preco-et'));
+  const gc      = getPrecoStr(document.getElementById('preco-gc'));
+  const ga      = getPrecoStr(document.getElementById('preco-ga'));
+  const s10     = getPrecoStr(document.getElementById('preco-s10'));
+  const s500Val = getPrecoStr(document.getElementById('preco-s500'));
 
-  /* Para P. JA, o campo s500 é na verdade "podium" */
+  /* Fix podium: não usa || pois "-" é truthy em JS
+     Verifica a chave configurada no campo dinamicamente */
   const isJA = isPosotJA();
-  const s500   = isJA ? '-'    : (s500Val || '-');
-  const podium = isJA ? (s500Val || '-') : '-';
+  const s500   = isJA ? '-'      : s500Val;
+  const podium = isJA ? s500Val  : '-';
 
   const now = new Date();
   const data = now.toLocaleDateString('pt-BR');
@@ -1968,9 +2318,7 @@ function salvarColeta() {
     showToast('Coleta salva!', `${postoAlvo} — ${data} às ${hora}`);
     /* Reset form */
     document.getElementById('posto-alvo-select').value = '';
-    ['preco-et','preco-gc','preco-ga','preco-s10','preco-s500'].forEach(id => {
-      document.getElementById(id).value = '';
-    });
+    resetPrecoInputs();
     fotoBase64 = null;
     document.getElementById('foto-preview').style.display = 'none';
     document.getElementById('foto-placeholder').style.display = 'block';
@@ -2026,24 +2374,24 @@ document.addEventListener("click", function(e) {
       <div class="preco-grid">
         <div class="preco-item">
           <label>🟢 ETANOL (ET)</label>
-          <input type="number" step="0.01" id="preco-et" class="preco-input" placeholder="0,000">
+          <input type="text" inputmode="numeric" id="preco-et" class="preco-input" value="0,000" readonly>
         </div>
         <div class="preco-item">
           <label>🔵 GAS. COMUM (GC)</label>
-          <input type="number" step="0.01" id="preco-gc" class="preco-input" placeholder="0,000">
+          <input type="text" inputmode="numeric" id="preco-gc" class="preco-input" value="0,000" readonly>
         </div>
         <div class="preco-item">
           <label>🟡 GAS. ADITIVADA (GA)</label>
-          <input type="number" step="0.01" id="preco-ga" class="preco-input" placeholder="0,000">
+          <input type="text" inputmode="numeric" id="preco-ga" class="preco-input" value="0,000" readonly>
         </div>
         <div class="preco-item">
           <label>🔴 DIESEL S10</label>
-          <input type="number" step="0.01" id="preco-s10" class="preco-input" placeholder="0,000">
+          <input type="text" inputmode="numeric" id="preco-s10" class="preco-input" value="0,000" readonly>
         </div>
         <!-- Este campo vira "GAS. PODIUM" para o P. JA automaticamente -->
         <div class="preco-item">
           <label id="label-preco-s500">⚫ DIESEL S500</label>
-          <input type="number" step="0.01" id="preco-s500" class="preco-input" placeholder="0,000">
+          <input type="text" inputmode="numeric" id="preco-s500" class="preco-input" value="0,000" readonly>
         </div>
       </div>
     </div>
