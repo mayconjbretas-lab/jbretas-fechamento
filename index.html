@@ -683,6 +683,49 @@
 
   .lub-row:last-child { border-bottom: none; }
 
+  /* ===== SEÇÃO CARGA OBRIGATÓRIA ===== */
+  .carga-aviso {
+    display: flex; align-items: center; gap: 8px;
+    background: rgba(255,77,109,0.08); border: 1px solid rgba(255,77,109,0.25);
+    border-radius: var(--radius); padding: 8px 14px;
+    font-size: 0.75rem; color: var(--danger);
+    font-family: var(--mono); margin-bottom: 1rem; letter-spacing: 0.04em;
+  }
+  .toggle-carga {
+    display: flex; border-radius: var(--radius); overflow: hidden;
+    border: 1px solid var(--border2); margin-bottom: 1rem;
+  }
+  .toggle-carga-btn {
+    flex: 1; padding: 10px; text-align: center;
+    font-family: var(--mono); font-size: 0.78rem; font-weight: 700;
+    letter-spacing: 0.06em; cursor: pointer; border: none;
+    background: var(--surface2); color: var(--text3); transition: all 0.2s;
+  }
+  .toggle-carga-btn.sim-ativo { background: var(--accent); color: #0a0d0f; }
+  .toggle-carga-btn.nao-ativo { background: var(--danger); color: #fff; }
+  .carga-campos { display: none; animation: fadeInCarga 0.25s ease; }
+  .carga-campos.visivel { display: block; }
+  @keyframes fadeInCarga {
+    from { opacity: 0; transform: translateY(-6px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+  .carga-row {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 0.7rem 0; border-bottom: 1px solid var(--border); gap: 12px;
+  }
+  .carga-row:last-child { border-bottom: none; }
+  .carga-label { font-size: 0.82rem; color: var(--text2); flex: 1; }
+  .btn-save-blocked {
+    background: var(--surface3) !important; color: var(--text3) !important;
+    cursor: not-allowed !important; opacity: 0.65;
+    border: 1px dashed var(--border2) !important;
+  }
+  .carga-status-msg {
+    text-align: center; font-family: var(--mono);
+    font-size: 0.68rem; margin-top: 0.5rem; letter-spacing: 0.04em;
+  }
+  /* ===== /SEÇÃO CARGA OBRIGATÓRIA ===== */
+
   .lub-label {
     font-size: 0.88rem;
     color: var(--text2);
@@ -1023,10 +1066,32 @@
       </div>
     </div>
 
+    <!-- ===== SEÇÃO CARGA OBRIGATÓRIA ===== -->
+    <div class="section" id="section-carga" style="border-color:rgba(255,77,109,0.3);">
+      <div class="section-header" style="background:rgba(255,77,109,0.05);">
+        <span class="section-icon">🚚</span>
+        <span class="section-title">Recebeu Carga Hoje?</span>
+        <span style="margin-left:auto;font-family:var(--mono);font-size:0.62rem;color:var(--danger);background:rgba(255,77,109,.12);border:1px solid rgba(255,77,109,.3);border-radius:4px;padding:2px 8px;">OBRIGATÓRIO</span>
+      </div>
+      <div class="section-body">
+        <div class="carga-aviso">⚠ Responda antes de salvar o fechamento</div>
+        <div class="toggle-carga">
+          <button class="toggle-carga-btn" id="btn-carga-sim" onclick="setCarga('sim')">✓ SIM — Recebi carga</button>
+          <button class="toggle-carga-btn" id="btn-carga-nao" onclick="setCarga('nao')">✗ NÃO — Sem carga hoje</button>
+        </div>
+        <div class="carga-campos" id="carga-campos">
+          <div style="font-size:0.68rem;color:var(--text3);font-family:var(--mono);letter-spacing:0.08em;text-transform:uppercase;margin-bottom:0.75rem;">Litros recebidos por combustível</div>
+          <div id="carga-body"><!-- gerado por JS --></div>
+        </div>
+      </div>
+    </div>
+    <!-- ===== /SEÇÃO CARGA OBRIGATÓRIA ===== -->
+
   </div><!-- /app-main -->
 
-  <div class="save-bar">
-    <button class="btn-save" onclick="salvarFechamento()">💾 Salvar Fechamento Diário</button>
+  <div class="save-bar" style="flex-direction:column;align-items:center;">
+    <button class="btn-save btn-save-blocked" id="btn-salvar-fechamento" onclick="salvarFechamento()">🔒 RESPONDA A CARGA PARA SALVAR</button>
+    <div class="carga-status-msg" id="carga-status-msg" style="color:var(--danger);">⚠ seção "Recebeu Carga?" obrigatória</div>
   </div>
 
 </div><!-- /screen-app -->
@@ -1801,6 +1866,99 @@ function exibirMsgModal(texto, tipo) {
 }
 /* ===== /ESQUECI MINHA SENHA ===== */
 
+/* ===== CONTROLE DA SEÇÃO CARGA ===== */
+let cargaRespondida = false;
+
+function setCarga(opcao) {
+  cargaRespondida = opcao;
+  const btnSim    = document.getElementById('btn-carga-sim');
+  const btnNao    = document.getElementById('btn-carga-nao');
+  const campos    = document.getElementById('carga-campos');
+  const btnSalvar = document.getElementById('btn-salvar-fechamento');
+  const statusMsg = document.getElementById('carga-status-msg');
+  btnSim.className = 'toggle-carga-btn';
+  btnNao.className = 'toggle-carga-btn';
+  if (opcao === 'sim') {
+    btnSim.classList.add('sim-ativo');
+    campos.classList.add('visivel');
+  } else {
+    btnNao.classList.add('nao-ativo');
+    campos.classList.remove('visivel');
+    if (currentPosto) {
+      currentPosto.combustiveis.forEach(c => {
+        const el = document.getElementById('carga-' + c.id);
+        if (el) el.value = '0';
+      });
+    }
+  }
+  btnSalvar.classList.remove('btn-save-blocked');
+  btnSalvar.textContent = '💾 Salvar Fechamento Diário';
+  statusMsg.textContent = opcao === 'sim'
+    ? '🚚 Carga informada — preencha os litros acima'
+    : '✓ Sem carga hoje — pronto para salvar';
+  statusMsg.style.color = opcao === 'sim' ? 'var(--warning)' : 'var(--accent)';
+}
+
+function buildCarga(combustiveis) {
+  const body = document.getElementById('carga-body');
+  if (!body) return;
+  body.innerHTML = '';
+  combustiveis.forEach(c => {
+    const row = document.createElement('div');
+    row.className = 'carga-row';
+    row.innerHTML = `
+      <span class="carga-label">${c.label}</span>
+      <div class="stepper">
+        <button class="step-btn" onclick="stepCarga('carga-${c.id}',-1000)">−</button>
+        <input class="step-input" id="carga-${c.id}" data-val="0" value="0"
+          type="text" inputmode="numeric" style="width:90px;text-align:center;"
+          oninput="formatCargaInput(this)">
+        <button class="step-btn" onclick="stepCarga('carga-${c.id}',1000)">+</button>
+      </div>`;
+    body.appendChild(row);
+  });
+}
+
+/* Formata o input de carga com ponto de milhar enquanto digita */
+function formatCargaInput(el) {
+  // Remove tudo que não for dígito
+  const digits = el.value.replace(/\D/g, '');
+  const num    = parseInt(digits) || 0;
+  el.dataset.val = num;
+  // Exibe com ponto de milhar
+  el.value = num === 0 ? '0' : num.toLocaleString('pt-BR');
+}
+
+/* Stepper dos campos de carga — usa dataset.val para guardar o valor numérico */
+function stepCarga(id, delta) {
+  const el  = document.getElementById(id);
+  const val = parseInt(el.dataset.val) || 0;
+  const novo = Math.max(0, val + delta);
+  el.dataset.val = novo;
+  el.value = novo === 0 ? '0' : novo.toLocaleString('pt-BR');
+}
+
+function resetCarga() {
+  cargaRespondida = false;
+  const btnSim    = document.getElementById('btn-carga-sim');
+  const btnNao    = document.getElementById('btn-carga-nao');
+  const campos    = document.getElementById('carga-campos');
+  const btnSalvar = document.getElementById('btn-salvar-fechamento');
+  const statusMsg = document.getElementById('carga-status-msg');
+  if (btnSim)    btnSim.className    = 'toggle-carga-btn';
+  if (btnNao)    btnNao.className    = 'toggle-carga-btn';
+  if (campos)    campos.classList.remove('visivel');
+  if (currentPosto) {
+    currentPosto.combustiveis.forEach(c => {
+      const el = document.getElementById('carga-' + c.id);
+      if (el) { el.value = '0'; el.dataset.val = '0'; }
+    });
+  }
+  if (btnSalvar) { btnSalvar.classList.add('btn-save-blocked'); btnSalvar.textContent = '🔒 RESPONDA A CARGA PARA SALVAR'; }
+  if (statusMsg) { statusMsg.textContent = '⚠ seção "Recebeu Carga?" obrigatória'; statusMsg.style.color = 'var(--danger)'; }
+}
+/* ===== /CONTROLE DA SEÇÃO CARGA ===== */
+
 /* ===== TOGGLE OLHO SENHA ===== */
 function toggleSenha() {
   const input = document.getElementById('login-senha');
@@ -1890,6 +2048,8 @@ function initApp() {
   buildTanques(posto.tanques);
   buildVendas(posto.combustiveis);
   updateTotals();
+  buildCarga(posto.combustiveis);
+  resetCarga();
 }
 
 function buildTanques(tanques) {
@@ -1968,7 +2128,11 @@ function updateTotals() {
 const SHEETS_URL = 'https://script.google.com/macros/s/AKfycbwoWCevroQ4G0rk-rMgdHIkF3wgZsAgjM-22oxGGGYcElreUGgObV5ACAecHIbRfqG2/exec';
 
 function salvarFechamento() {
-  const btn = document.querySelector('.btn-save');
+  if (!cargaRespondida) {
+    showToast('Atenção', 'Responda a seção "Recebeu Carga Hoje?" antes de salvar.');
+    return;
+  }
+  const btn = document.getElementById('btn-salvar-fechamento');
   btn.textContent = '⏳ Salvando...';
   btn.disabled = true;
 
@@ -1988,6 +2152,15 @@ function salvarFechamento() {
   const lubSoutag = document.getElementById('lub-soutag')?.value || 0;
   const lubDia    = document.getElementById('lub-dia')?.value || 0;
 
+  /* Carga por combustível */
+  const cargaInfo = currentPosto.combustiveis.map(c => {
+    const el = document.getElementById('carga-' + c.id);
+    const litros = cargaRespondida === 'sim'
+      ? (parseInt(el?.dataset.val) || 0)
+      : 0;
+    return `${c.label}: ${litros}L`;
+  }).join(' | ');
+
   const now = new Date();
   const data = now.toLocaleDateString('pt-BR');
   const hora = now.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
@@ -1995,13 +2168,15 @@ function salvarFechamento() {
   const payload = {
     data,
     hora,
-    posto:        currentPosto.nome,
-    gerente:      currentUser.gerente,
-    tanques:      tanqueInfo,
-    vendas:       vendasInfo,
+    posto:         currentPosto.nome,
+    gerente:       currentUser.gerente,
+    tanques:       tanqueInfo,
+    vendas:        vendasInfo,
     totalVendas,
     lubSoutag,
-    lubDia
+    lubDia,
+    cargaRecebida: cargaRespondida,
+    carga:         cargaInfo
   };
 
   fetch(SHEETS_URL, {
@@ -2014,6 +2189,7 @@ function salvarFechamento() {
     btn.textContent = '💾 Salvar Fechamento Diário';
     btn.disabled = false;
     showToast('Fechamento salvo com sucesso!', `${currentPosto.nome} — ${data} às ${hora}`);
+    resetCarga();
   })
   .catch(() => {
     btn.textContent = '💾 Salvar Fechamento Diário';
@@ -2041,6 +2217,13 @@ function showToast(title, msg) {
     });
   }
 
+
+/* ===== CAMPO EXTRA DINÂMICO POR POSTO — COLETA DE PREÇOS ===== */
+const CAMPO_EXTRA_COLETA = {
+  "P16": { emoji:"🟣", label:"GAS. PODIUM", chave:"podium" }
+  // "P21": { emoji:"🟡", label:"GAS. GRID",   chave:"grid" },
+};
+/* ===== /CAMPO EXTRA ===== */
 
 /* === CONCORRENTES === */
 const CONCORRENTES = {
@@ -2189,14 +2372,14 @@ function ajustarCampoColeta() {
   const labelEl = document.getElementById('label-preco-s500');
   const inputEl = document.getElementById('preco-s500');
   if (!labelEl || !inputEl) return;
-  if (isPosotJA()) {
-    labelEl.textContent = '🟣 GAS. PODIUM';
-    inputEl.placeholder = '0,00';
-    inputEl.dataset.campoJa = 'podium';
+  const key   = Object.keys(DB).find(k => DB[k] === currentPosto);
+  const extra = CAMPO_EXTRA_COLETA[key];
+  if (extra) {
+    labelEl.textContent = extra.emoji + ' ' + extra.label;
+    inputEl.dataset.chaveExtra = extra.chave;
   } else {
     labelEl.textContent = '⚫ DIESEL S500';
-    inputEl.placeholder = '0,00';
-    inputEl.dataset.campoJa = '';
+    inputEl.dataset.chaveExtra = 's500';
   }
 }
 
