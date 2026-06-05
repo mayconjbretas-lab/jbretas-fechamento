@@ -1768,12 +1768,7 @@ async function enviarSenha() {
 
   // Modo teste: se EmailJS não configurado, exibe senha na tela
   if (EMAILJS_SERVICE_ID === 'SEU_SERVICE_ID') {
-    exibirMsgModal(
-      '⚠ EmailJS não configurado.
-Senha encontrada: ' + foundUser.senha + '
-(Configure o EmailJS para envio real.)',
-      'err'
-    );
+    exibirMsgModal('⚠ EmailJS não configurado. Senha: ' + foundUser.senha, 'err');
     return;
   }
 
@@ -1787,8 +1782,7 @@ Senha encontrada: ' + foundUser.senha + '
       senha:    foundUser.senha,
       posto:    foundPosto.nome,
     });
-    exibirMsgModal('✅ E-mail enviado com sucesso!
-Verifique sua caixa de entrada.', 'ok');
+    exibirMsgModal('✅ E-mail enviado! Verifique sua caixa de entrada.', 'ok');
     btn.textContent = '✅ ENVIADO';
     setTimeout(fecharModalSenha, 3000);
   } catch (err) {
@@ -2108,7 +2102,7 @@ function initPrecoInputs() {
 
     // estado interno: string de dígitos puros
     el._digitos = '';
-    el.value = '0,000';
+    el.value = '0,00';
     el.setAttribute('readonly', true);
 
     el.addEventListener('keydown', precoKeyHandler);
@@ -2141,11 +2135,11 @@ function precoKeyHandler(e) {
 
 function renderPreco(el) {
   const d = el._digitos;
-  if (!d) { el.value = '0,000'; return; }
-  // Completa com zeros à esquerda até ter ao menos 3 casas (centavos)
-  const pad = d.padStart(3, '0');
-  const intPart = pad.slice(0, -3).replace(/^0+/, '') || '0';
-  const decPart = pad.slice(-3);
+  if (!d) { el.value = '0,00'; return; }
+  // 2 casas decimais: 5→"0,05"  56→"0,56"  569→"5,69"  máx 4 dígitos = 99,99
+  const pad = d.padStart(2, '0');
+  const intPart = pad.slice(0, -2).replace(/^0+/, '') || '0';
+  const decPart = pad.slice(-2);
   el.value = intPart + ',' + decPart;
 }
 
@@ -2160,7 +2154,7 @@ function resetPrecoInputs() {
     const el = document.getElementById(id);
     if (!el) return;
     el._digitos = '';
-    el.value = '0,000';
+    el.value = '0,00';
   });
 }
 /* ===== /CALCULADORA DE PREÇOS ===== */
@@ -2197,11 +2191,11 @@ function ajustarCampoColeta() {
   if (!labelEl || !inputEl) return;
   if (isPosotJA()) {
     labelEl.textContent = '🟣 GAS. PODIUM';
-    inputEl.placeholder = '0,000';
+    inputEl.placeholder = '0,00';
     inputEl.dataset.campoJa = 'podium';
   } else {
     labelEl.textContent = '⚫ DIESEL S500';
-    inputEl.placeholder = '0,000';
+    inputEl.placeholder = '0,00';
     inputEl.dataset.campoJa = '';
   }
 }
@@ -2417,24 +2411,24 @@ document.addEventListener("click", function(e) {
       <div class="preco-grid">
         <div class="preco-item">
           <label>🟢 ETANOL (ET)</label>
-          <input type="text" inputmode="numeric" id="preco-et" class="preco-input" value="0,000" readonly>
+          <input type="text" inputmode="numeric" id="preco-et" class="preco-input" value="0,00" readonly>
         </div>
         <div class="preco-item">
           <label>🔵 GAS. COMUM (GC)</label>
-          <input type="text" inputmode="numeric" id="preco-gc" class="preco-input" value="0,000" readonly>
+          <input type="text" inputmode="numeric" id="preco-gc" class="preco-input" value="0,00" readonly>
         </div>
         <div class="preco-item">
           <label>🟡 GAS. ADITIVADA (GA)</label>
-          <input type="text" inputmode="numeric" id="preco-ga" class="preco-input" value="0,000" readonly>
+          <input type="text" inputmode="numeric" id="preco-ga" class="preco-input" value="0,00" readonly>
         </div>
         <div class="preco-item">
           <label>🔴 DIESEL S10</label>
-          <input type="text" inputmode="numeric" id="preco-s10" class="preco-input" value="0,000" readonly>
+          <input type="text" inputmode="numeric" id="preco-s10" class="preco-input" value="0,00" readonly>
         </div>
         <!-- Este campo vira "GAS. PODIUM" para o P. JA automaticamente -->
         <div class="preco-item">
           <label id="label-preco-s500">⚫ DIESEL S500</label>
-          <input type="text" inputmode="numeric" id="preco-s500" class="preco-input" value="0,000" readonly>
+          <input type="text" inputmode="numeric" id="preco-s500" class="preco-input" value="0,00" readonly>
         </div>
       </div>
     </div>
