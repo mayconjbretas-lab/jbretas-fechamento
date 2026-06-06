@@ -1008,9 +1008,17 @@
         <div class="info-card-label">Posto</div>
         <div class="info-card-value" id="card-posto">—</div>
       </div>
-      <div class="info-card">
-        <div class="info-card-label">Data</div>
-        <div class="info-card-value" id="card-data">—</div>
+      <div class="info-card" style="position:relative;">
+        <div class="info-card-label">📅 Data do Relatório</div>
+        <input type="date" id="card-data-input"
+          style="width:100%;background:transparent;border:none;color:var(--accent);
+                 font-size:0.95rem;font-weight:500;font-family:var(--sans);
+                 outline:none;cursor:pointer;padding:0;"
+          onchange="atualizarDataRelatorio(this.value)">
+        <div style="font-size:0.62rem;color:var(--warning);font-family:var(--mono);
+                    margin-top:4px;letter-spacing:0.04em;" id="data-aviso">
+          ⚠ Relatório referente a ontem
+        </div>
       </div>
     </div>
 
@@ -2029,20 +2037,69 @@ function showScreen(name) {
 }
 
 /* =====================  APP  ===================== */
+
+// Data do relatório — padrão = ontem (gerente envia hoje o relatório de ontem)
+let dataRelatorio = null; // será definida no initApp
+
+function getOntem() {
+  const d = new Date();
+  d.setDate(d.getDate() - 1);
+  return d;
+}
+
+function dateToInputValue(d) {
+  // Formato YYYY-MM-DD para input type=date
+  const y = d.getFullYear();
+  const m = String(d.getMonth() + 1).padStart(2, '0');
+  const day = String(d.getDate()).padStart(2, '0');
+  return y + '-' + m + '-' + day;
+}
+
+function dateToBR(d) {
+  return d.toLocaleDateString('pt-BR');
+}
+
+function inputValueToDate(val) {
+  // val = "YYYY-MM-DD"
+  const [y, m, d] = val.split('-').map(Number);
+  return new Date(y, m - 1, d);
+}
+
+function atualizarDataRelatorio(val) {
+  dataRelatorio = inputValueToDate(val);
+  const hoje = new Date();
+  const ontem = getOntem();
+  const aviso = document.getElementById('data-aviso');
+  const dataBR = dateToBR(dataRelatorio);
+  if (dataBR === dateToBR(ontem)) {
+    aviso.textContent = '⚠ Relatório referente a ontem';
+    aviso.style.color = 'var(--warning)';
+  } else if (dataBR === dateToBR(hoje)) {
+    aviso.textContent = '⚠ Data de hoje — confirme se está correto';
+    aviso.style.color = 'var(--danger)';
+  } else {
+    aviso.textContent = '📅 Data selecionada: ' + dataBR;
+    aviso.style.color = 'var(--accent)';
+  }
+}
+
 function initApp() {
   const gerente = currentUser.gerente;
   const posto = currentPosto;
   const initials = gerente.split(' ').map(w => w[0]).slice(0,2).join('');
-  const now = new Date();
-  const dateStr = now.toLocaleDateString('pt-BR', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
-  const dateFmt = now.toLocaleDateString('pt-BR');
+
+  // Padrão: ontem (relatório enviado hoje referente a ontem)
+  const ontem = getOntem();
+  dataRelatorio = ontem;
+  const inputVal = dateToInputValue(ontem);
+  const dateStr = ontem.toLocaleDateString('pt-BR', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
 
   document.getElementById('app-avatar').textContent = initials;
   document.getElementById('app-gerente').textContent = gerente;
   document.getElementById('app-posto').textContent = posto.nome;
   document.getElementById('card-gerente').textContent = gerente;
   document.getElementById('card-posto').textContent = posto.nome;
-  document.getElementById('card-data').textContent = dateFmt;
+  document.getElementById('card-data-input').value = inputVal;
   document.getElementById('page-date').textContent = dateStr;
 
   buildTanques(posto.tanques);
@@ -2161,9 +2218,9 @@ function salvarFechamento() {
     return `${c.label}: ${litros}L`;
   }).join(' | ');
 
-  const now = new Date();
-  const data = now.toLocaleDateString('pt-BR');
-  const hora = now.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
+  const now  = new Date();
+  const data = dateToBR(dataRelatorio);  // data do relatório (ontem por padrão)
+  const hora = now.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' }); // hora do envio
 
   const payload = {
     data,
