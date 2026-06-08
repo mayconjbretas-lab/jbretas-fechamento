@@ -5,7 +5,8 @@ const ASSETS = [
   './css/style.css',
   './js/db.js',
   './js/app.js',
-  './js/coleta.js'
+  './js/coleta.js',
+  './js/copasa.js',
 ];
 
 self.addEventListener('install', event => {
