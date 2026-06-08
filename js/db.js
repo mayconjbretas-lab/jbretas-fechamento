@@ -119,7 +119,7 @@ const DB = {
   },
   "P08": {
     nome: "P. BOMBOM FILIAL",
-    users: [{ email: "gerente8@jbretas.com", senha: "posto08", gerente: "Gerente P. BOMBOM (G1)" }],
+    users: [{ email: "gerente8@jbretas.com", senha: "posto08", gerente: "Gerente P. BOMBOM FILIAL" }],
     tanques: [
       { id: "t8_1", nome: "TQ. 1", fuel: "ETANOL", capacidade: 30000 },
       { id: "t8_2", nome: "TQ. 2", fuel: "DIESEL S-10", capacidade: 15000 },
@@ -135,7 +135,7 @@ const DB = {
   },
   "P09": {
     nome: "P. BOMBOM MATRIZ",
-    users: [{ email: "gerente9@jbretas.com", senha: "posto09", gerente: "Gerente P. BOMBOM (G2)" }],
+    users: [{ email: "gerente9@jbretas.com", senha: "posto09", gerente: "Gerente P. BOMBOM MATRIZ" }],
     tanques: [
       { id: "t9_1", nome: "TQ. 1", fuel: "GASOLINA COMUM", capacidade: 15000 },
       { id: "t9_2", nome: "TQ. 2", fuel: "ETANOL", capacidade: 10000 },
