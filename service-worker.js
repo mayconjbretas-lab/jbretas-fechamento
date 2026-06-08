@@ -1,7 +1,11 @@
 const CACHE_NAME = 'jbretas-v1';
 const ASSETS = [
   './index.html',
-  './manifest.json'
+  './manifest.json',
+  './css/style.css',
+  './js/db.js',
+  './js/app.js',
+  './js/coleta.js'
 ];
 
 self.addEventListener('install', event => {
