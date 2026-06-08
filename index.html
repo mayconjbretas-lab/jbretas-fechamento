@@ -871,10 +871,6 @@
   font-family: var(--mono);
   font-weight: 700;
   letter-spacing: 0.04em;
-  caret-color: transparent;
-  cursor: pointer;
-  user-select: none;
-  -webkit-user-select: none;
   transition: border-color 0.2s, box-shadow 0.2s;
 }
 .preco-input:focus {
@@ -2339,44 +2335,44 @@ function initPrecoInputs() {
   PRECO_IDS.forEach(id => {
     const el = document.getElementById(id);
     if (!el) return;
-
-    // estado interno: string de dígitos puros
     el._digitos = '';
-    el.value = '0,00';
-    el.setAttribute('readonly', true);
-
-    el.addEventListener('keydown', precoKeyHandler);
-    el.addEventListener('touchend', e => { e.preventDefault(); el.focus(); });
-    el.addEventListener('click', () => el.focus());
+    el.value = '';
+    el.removeAttribute('readonly');
+    // Remove listeners antigos clonando o elemento
+    const novo = el.cloneNode(true);
+    el.parentNode.replaceChild(novo, el);
+    const nel = document.getElementById(id);
+    nel._digitos = '';
+    nel.addEventListener('input', precoInputHandler);
+    nel.addEventListener('keydown', precoKeyHandler);
+    nel.addEventListener('focus', function() { this.select(); });
   });
 }
 
-function precoKeyHandler(e) {
+function precoInputHandler(e) {
   const el = e.target;
+  // Extrai só dígitos do que foi digitado
+  const digits = el.value.replace(/\D/g, '').slice(0, 4);
+  el._digitos = digits;
+  renderPreco(el);
+  // Posiciona cursor no final
+  setTimeout(() => {
+    el.selectionStart = el.selectionEnd = el.value.length;
+  }, 0);
+}
 
-  if (e.key >= '0' && e.key <= '9') {
+function precoKeyHandler(e) {
+  // No desktop mantém comportamento anterior
+  if (e.key === 'Escape' || e.key === 'Delete') {
     e.preventDefault();
-    if (el._digitos.length >= 4) return;   // máx 4 dígitos = 99,99
-    el._digitos += e.key;
-    renderPreco(el);
-
-  } else if (e.key === 'Backspace') {
-    e.preventDefault();
-    el._digitos = el._digitos.slice(0, -1);
-    renderPreco(el);
-
-  } else if (e.key === 'Delete' || e.key === 'Escape') {
-    e.preventDefault();
-    el._digitos = '';
-    renderPreco(el);
+    e.target._digitos = '';
+    renderPreco(e.target);
   }
-  // Ignora qualquer outra tecla (letras, setas, etc.)
 }
 
 function renderPreco(el) {
-  const d = el._digitos;
-  if (!d) { el.value = '0,00'; return; }
-  // 2 casas decimais: 5→"0,05"  56→"0,56"  569→"5,69"  máx 4 dígitos = 99,99
+  const d = el._digitos || '';
+  if (!d) { el.value = ''; el.placeholder = '0,00'; return; }
   const pad = d.padStart(2, '0');
   const intPart = pad.slice(0, -2).replace(/^0+/, '') || '0';
   const decPart = pad.slice(-2);
@@ -2384,9 +2380,8 @@ function renderPreco(el) {
 }
 
 function getPrecoStr(el) {
-  // Retorna o valor formatado ou '-' se zero/vazio
   if (!el || !el._digitos || el._digitos === '') return '-';
-  return el.value; // ex: "5,69"
+  return el.value;
 }
 
 function resetPrecoInputs() {
@@ -2394,7 +2389,8 @@ function resetPrecoInputs() {
     const el = document.getElementById(id);
     if (!el) return;
     el._digitos = '';
-    el.value = '0,00';
+    el.value = '';
+    el.placeholder = '0,00';
   });
 }
 /* ===== /CALCULADORA DE PREÇOS ===== */
@@ -2651,24 +2647,24 @@ document.addEventListener("click", function(e) {
       <div class="preco-grid">
         <div class="preco-item">
           <label>🟢 ETANOL (ET)</label>
-          <input type="text" inputmode="numeric" id="preco-et" class="preco-input" value="0,00" readonly>
+          <input type="tel" id="preco-et" class="preco-input" placeholder="0,00">
         </div>
         <div class="preco-item">
           <label>🔵 GAS. COMUM (GC)</label>
-          <input type="text" inputmode="numeric" id="preco-gc" class="preco-input" value="0,00" readonly>
+          <input type="tel" id="preco-gc" class="preco-input" placeholder="0,00">
         </div>
         <div class="preco-item">
           <label>🟡 GAS. ADITIVADA (GA)</label>
-          <input type="text" inputmode="numeric" id="preco-ga" class="preco-input" value="0,00" readonly>
+          <input type="tel" id="preco-ga" class="preco-input" placeholder="0,00">
         </div>
         <div class="preco-item">
           <label>🔴 DIESEL S10</label>
-          <input type="text" inputmode="numeric" id="preco-s10" class="preco-input" value="0,00" readonly>
+          <input type="tel" id="preco-s10" class="preco-input" placeholder="0,00">
         </div>
         <!-- Este campo vira "GAS. PODIUM" para o P. JA automaticamente -->
         <div class="preco-item">
           <label id="label-preco-s500">⚫ DIESEL S500</label>
-          <input type="text" inputmode="numeric" id="preco-s500" class="preco-input" value="0,00" readonly>
+          <input type="tel" id="preco-s500" class="preco-input" placeholder="0,00">
         </div>
       </div>
     </div>
