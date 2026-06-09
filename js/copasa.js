@@ -304,7 +304,15 @@ function abrirModalCopasa() {
   document.getElementById('copasa-leitura-input').value = '';
   document.getElementById('copasa-leitura-input').focus();
   document.getElementById('copasa-registro-msg').style.display = 'none';
-
+ 
+  // Data padrão = ontem
+  const ontem = new Date();
+  ontem.setDate(ontem.getDate() - 1);
+  const y = ontem.getFullYear();
+  const m = String(ontem.getMonth() + 1).padStart(2, '0');
+  const d = String(ontem.getDate()).padStart(2, '0');
+  document.getElementById('copasa-data-input').value = y + '-' + m + '-' + d;
+ 
   // Mostra última leitura como referência
   const ultimo = copasaHistorico[copasaHistorico.length - 1];
   const hint = document.getElementById('copasa-leitura-hint');
@@ -321,18 +329,23 @@ function fecharModalCopasa() {
 }
 
 async function salvarRegistroCopasa() {
-  const input = document.getElementById('copasa-leitura-input');
+  const input  = document.getElementById('copasa-leitura-input');
+  const dataInput = document.getElementById('copasa-data-input');
   const leitura = parseFloat(input.value.replace(',', '.'));
-  const msg = document.getElementById('copasa-registro-msg');
-
+  const msg    = document.getElementById('copasa-registro-msg');
+ 
   if (isNaN(leitura) || leitura <= 0) {
     msg.textContent = '⚠ Informe uma leitura válida';
     msg.className = 'copasa-msg err';
     msg.style.display = 'block';
     return;
   }
-
-  // Valida: leitura não pode ser menor que a anterior
+ 
+  // Converte data do input (YYYY-MM-DD) para dd/mm/aaaa
+  const partes = dataInput.value.split('-');
+  const dataRef = partes[2] + '/' + partes[1] + '/' + partes[0];
+ 
+  // Valida leitura menor que anterior
   const ultimo = copasaHistorico[copasaHistorico.length - 1];
   if (ultimo && leitura < ultimo.leitura) {
     msg.textContent = '⚠ Leitura menor que a anterior (' + ultimo.leitura.toFixed(1) + ' m³)';
@@ -340,26 +353,26 @@ async function salvarRegistroCopasa() {
     msg.style.display = 'block';
     return;
   }
-
+ 
   const consumo = ultimo ? parseFloat((leitura - ultimo.leitura).toFixed(2)) : 0;
-  const now = new Date();
-  const data = now.toLocaleDateString('pt-BR');
+  const now  = new Date();
   const hora = now.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
-
+ 
   const btn = document.getElementById('btn-salvar-copasa');
   btn.textContent = '⏳ Salvando...';
   btn.disabled = true;
-
+ 
   const payload = {
     tipo: 'copasa',
-    data, hora,
-    posto: currentPosto.nome,
-    gerente: currentUser.gerente,
+    data: dataRef,
+    hora,
+    posto:           currentPosto.nome,
+    gerente:         currentUser.gerente,
     leitura,
     consumo,
     leituraAnterior: ultimo ? ultimo.leitura : 0
   };
-
+ 
   try {
     await fetch(SHEETS_URL_COPASA, {
       method: 'POST',
@@ -367,23 +380,22 @@ async function salvarRegistroCopasa() {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(payload)
     });
-
-    // Atualiza cache local
-    const novoReg = { data, hora, leitura, consumo };
+ 
+    const novoReg = { data: dataRef, hora, leitura, consumo };
     copasaHistorico.push(novoReg);
     localStorage.setItem('copasa_' + currentPosto.nome, JSON.stringify(copasaHistorico));
-
-    msg.textContent = '✅ Registrado! Consumo hoje: ' + consumo.toFixed(2) + ' m³';
+ 
+    msg.textContent = '✅ Registrado! Consumo ' + dataRef + ': ' + consumo.toFixed(2) + ' m³';
     msg.className = 'copasa-msg ok';
     msg.style.display = 'block';
     btn.textContent = '💧 SALVAR LEITURA';
     btn.disabled = false;
-
+ 
     setTimeout(() => {
       fecharModalCopasa();
       renderCopasaDashboard();
     }, 1500);
-
+ 
   } catch(e) {
     msg.textContent = '❌ Erro ao salvar. Tente novamente.';
     msg.className = 'copasa-msg err';
@@ -392,3 +404,4 @@ async function salvarRegistroCopasa() {
     btn.disabled = false;
   }
 }
+ 
