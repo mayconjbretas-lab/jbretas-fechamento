@@ -403,6 +403,13 @@
     <div class="modal-title">💧 Registrar Leitura</div>
     <div class="modal-sub">Informe a leitura atual do hidrômetro em m³.</div>
     <div id="copasa-leitura-hint" class="copasa-leitura-hint" style="display:none;"></div>
+    <div class="field-group" style="margin-bottom:0.75rem;">
+  <label class="field-label">📅 Data de referência</label>
+  <input type="date" id="copasa-data-input"
+    style="width:100%;background:var(--surface2);border:1px solid var(--border);
+           border-radius:var(--radius);color:var(--accent);font-size:0.95rem;
+           padding:0.75rem 1rem;outline:none;">
+</div>
     <input type="number" step="0.1" min="0" id="copasa-leitura-input"
       class="copasa-leitura-input" placeholder="Ex: 1324.8"
       onkeydown="if(event.key==='Enter') salvarRegistroCopasa()">
