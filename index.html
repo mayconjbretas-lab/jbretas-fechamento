@@ -12,9 +12,13 @@
   <meta name="apple-mobile-web-app-title" content="JBRETAS">
   <link rel="apple-touch-icon" href="icon-192.png">
   <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="CSS/style.css">
 
   <!-- EmailJS SDK -->
+  <script>
+    // URL do backend — configurada aqui para não aparecer nos arquivos JS versionados
+    window._SHEETS_URL = "https://script.google.com/macros/s/AKfycbwoJ3-g48frwYtMlnpVj5EIYapInPP11OJXrkOPUzCULrbIZWMQW51xFe-Ot4cox00r/exec";
+  </script>
   <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
   <script>
     (function(){ emailjs.init({ publicKey: 'SUA_PUBLIC_KEY' }); })();
