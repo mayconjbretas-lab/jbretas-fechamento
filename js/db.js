@@ -5,11 +5,11 @@
 const DB_ESTRUTURA = {
   "P01": { nome: "P. ALEX",
     tanques: [
-      { id:"t1_1", nome:"TQ. 1", fuel:"DIESEL S-10",        capacidade:10000 },
-      { id:"t1_2", nome:"TQ. 2", fuel:"GASOLINA ADITIVADA", capacidade:10000 },
-      { id:"t1_3", nome:"TQ. 3", fuel:"ETANOL",             capacidade:10000 },
-      { id:"t1_4", nome:"TQ. 4", fuel:"GASOLINA COMUM",     capacidade:30000 },
-      { id:"t1_5", nome:"TQ. 5", fuel:"ETANOL",             capacidade:15000 },
+      { id:"t1_1", nome:"TQ. 1", fuel:"DIESEL S-10",        capacidade:10000, arq:"bi_v1"    },
+      { id:"t1_2", nome:"TQ. 2", fuel:"GASOLINA ADITIVADA", capacidade:10000, arq:"bi_v2"    },
+      { id:"t1_3", nome:"TQ. 3", fuel:"ETANOL",             capacidade:10000, arq:"bi_v1"    },
+      { id:"t1_4", nome:"TQ. 4", fuel:"GASOLINA COMUM",     capacidade:30000, arq:"pleno_30k"},
+      { id:"t1_5", nome:"TQ. 5", fuel:"ETANOL",             capacidade:15000, arq:"pleno_15k"},
     ],
     combustiveis: [
       { id:"diesel_s_10",        label:"DIESEL S-10" },
@@ -20,11 +20,11 @@ const DB_ESTRUTURA = {
   },
   "P02": { nome: "P. ANA LÚCIA",
     tanques: [
-      { id:"t2_1", nome:"TQ. 1", fuel:"GASOLINA COMUM",     capacidade:30000 },
-      { id:"t2_2", nome:"TQ. 2", fuel:"GASOLINA COMUM",     capacidade:10000 },
-      { id:"t2_3", nome:"TQ. 3", fuel:"ETANOL ADITIVADO",   capacidade:20000 },
-      { id:"t2_4", nome:"TQ. 4", fuel:"ETANOL ADITIVADO",   capacidade: 7500 },
-      { id:"t2_5", nome:"TQ. 5", fuel:"DIESEL S-10",        capacidade: 7500 },
+      { id:"t2_1", nome:"TQ. 1", fuel:"GASOLINA COMUM",     capacidade:30000, arq:"pleno_30k"},
+      { id:"t2_2", nome:"TQ. 2", fuel:"GASOLINA COMUM",     capacidade:10000, arq:"bi_v1"},
+      { id:"t2_3", nome:"TQ. 3", fuel:"ETANOL ADITIVADO",   capacidade:20000, arq:"bi_v1"},
+      { id:"t2_4", nome:"TQ. 4", fuel:"ETANOL ADITIVADO",   capacidade: 7500, arq:"bi_v1"},
+      { id:"t2_5", nome:"TQ. 5", fuel:"DIESEL S-10",        capacidade: 7500, arq:"bi_v1"},
     ],
     combustiveis: [
       { id:"gasolina_comum",   label:"GASOLINA COMUM" },
@@ -34,10 +34,10 @@ const DB_ESTRUTURA = {
   },
   "P03": { nome: "P. ARAPONGA",
     tanques: [
-      { id:"t3_1", nome:"TQ. 1", fuel:"GASOLINA COMUM",     capacidade:30000 },
-      { id:"t3_2", nome:"TQ. 2", fuel:"DIESEL S-10",        capacidade:10000 },
-      { id:"t3_3", nome:"TQ. 3", fuel:"ETANOL",             capacidade:10000 },
-      { id:"t3_4", nome:"TQ. 4", fuel:"GASOLINA ADITIVADA", capacidade:10000 },
+      { id:"t3_1", nome:"TQ. 1", fuel:"GASOLINA COMUM",     capacidade:30000, arq:"pleno_30k"},
+      { id:"t3_2", nome:"TQ. 2", fuel:"DIESEL S-10",        capacidade:10000, arq:"bi_v1"},
+      { id:"t3_3", nome:"TQ. 3", fuel:"ETANOL",             capacidade:10000, arq:"bi_v2"},
+      { id:"t3_4", nome:"TQ. 4", fuel:"GASOLINA ADITIVADA", capacidade:10000, arq:"bi_v1"},
     ],
     combustiveis: [
       { id:"gasolina_comum",     label:"GASOLINA COMUM" },
@@ -48,11 +48,11 @@ const DB_ESTRUTURA = {
   },
   "P04": { nome: "P. AVIVA",
     tanques: [
-      { id:"t4_1", nome:"TQ. 1", fuel:"GASOLINA COMUM",     capacidade:30000 },
-      { id:"t4_2", nome:"TQ. 2", fuel:"GASOLINA ADITIVADA", capacidade:10000 },
-      { id:"t4_3", nome:"TQ. 3", fuel:"ETANOL",             capacidade:20000 },
-      { id:"t4_4", nome:"TQ. 4", fuel:"DIESEL S-10",        capacidade:15000 },
-      { id:"t4_5", nome:"TQ. 5", fuel:"DIESEL S-500",       capacidade:15000 },
+      { id:"t4_1", nome:"TQ. 1", fuel:"GASOLINA COMUM",     capacidade:30000, arq:"pleno_30k"},
+      { id:"t4_2", nome:"TQ. 2", fuel:"GASOLINA ADITIVADA", capacidade:10000, arq:"bi_v1"},
+      { id:"t4_3", nome:"TQ. 3", fuel:"ETANOL",             capacidade:20000, arq:"bi_v1"},
+      { id:"t4_4", nome:"TQ. 4", fuel:"DIESEL S-10",        capacidade:15000, arq:"bi_v1"},
+      { id:"t4_5", nome:"TQ. 5", fuel:"DIESEL S-500",       capacidade:15000, arq:"bi_v1"},
     ],
     combustiveis: [
       { id:"gasolina_comum",     label:"GASOLINA COMUM" },
@@ -64,10 +64,10 @@ const DB_ESTRUTURA = {
   },
   "P05": { nome: "P. BAHAMAS",
     tanques: [
-      { id:"t5_1", nome:"TQ. 1", fuel:"ETANOL",             capacidade:10000 },
-      { id:"t5_2", nome:"TQ. 2", fuel:"GASOLINA ADITIVADA", capacidade:10000 },
-      { id:"t5_3", nome:"TQ. 3", fuel:"GASOLINA COMUM",     capacidade:10000 },
-      { id:"t5_4", nome:"TQ. 4", fuel:"GASOLINA COMUM",     capacidade:15000 },
+      { id:"t5_1", nome:"TQ. 1", fuel:"ETANOL",             capacidade:10000, arq:"veederroot"},
+      { id:"t5_2", nome:"TQ. 2", fuel:"GASOLINA ADITIVADA", capacidade:10000, arq:"veederroot"},
+      { id:"t5_3", nome:"TQ. 3", fuel:"GASOLINA COMUM",     capacidade:10000, arq:"bi_v1"},
+      { id:"t5_4", nome:"TQ. 4", fuel:"GASOLINA COMUM",     capacidade:15000, arq:"pleno_15k"},
     ],
     combustiveis: [
       { id:"etanol",             label:"ETANOL" },
@@ -77,9 +77,9 @@ const DB_ESTRUTURA = {
   },
   "P06": { nome: "P. BARBOSA",
     tanques: [
-      { id:"t6_1", nome:"TQ. 1", fuel:"ETANOL",         capacidade:15000 },
-      { id:"t6_2", nome:"TQ. 2", fuel:"DIESEL S-10",    capacidade:15000 },
-      { id:"t6_3", nome:"TQ. 3", fuel:"GASOLINA COMUM", capacidade:30000 },
+      { id:"t6_1", nome:"TQ. 1", fuel:"ETANOL",         capacidade:15000, arq:"bi_v1"},
+      { id:"t6_2", nome:"TQ. 2", fuel:"DIESEL S-10",    capacidade:15000, arq:"bi_v1"},
+      { id:"t6_3", nome:"TQ. 3", fuel:"GASOLINA COMUM", capacidade:30000, arq:"pleno_30k"},
     ],
     combustiveis: [
       { id:"etanol",         label:"ETANOL" },
@@ -89,11 +89,11 @@ const DB_ESTRUTURA = {
   },
   "P07": { nome: "P. BERNARDO",
     tanques: [
-      { id:"t7_1", nome:"TQ. 1", fuel:"ETANOL",         capacidade:15000 },
-      { id:"t7_2", nome:"TQ. 2", fuel:"GASOLINA COMUM", capacidade:15000 },
-      { id:"t7_3", nome:"TQ. 3", fuel:"DIESEL S-10",    capacidade:30000 },
-      { id:"t7_4", nome:"TQ. 4", fuel:"GASOLINA COMUM", capacidade:20000 },
-      { id:"t7_5", nome:"TQ. 5", fuel:"DIESEL S-500",   capacidade:10000 },
+      { id:"t7_1", nome:"TQ. 1", fuel:"ETANOL",         capacidade:15000, arq:"bi_v1"},
+      { id:"t7_2", nome:"TQ. 2", fuel:"GASOLINA COMUM", capacidade:15000, arq:"bi_v1"},
+      { id:"t7_3", nome:"TQ. 3", fuel:"DIESEL S-10",    capacidade:30000, arq:"pleno_30k"},
+      { id:"t7_4", nome:"TQ. 4", fuel:"GASOLINA COMUM", capacidade:20000, arq:"bi_v1"},
+      { id:"t7_5", nome:"TQ. 5", fuel:"DIESEL S-500",   capacidade:10000, arq:"bi_v1"},
     ],
     combustiveis: [
       { id:"etanol",         label:"ETANOL" },
@@ -104,10 +104,10 @@ const DB_ESTRUTURA = {
   },
   "P08": { nome: "P. BOMBOM FILIAL",
     tanques: [
-      { id:"t8_1", nome:"TQ. 1", fuel:"ETANOL",             capacidade:30000 },
-      { id:"t8_2", nome:"TQ. 2", fuel:"DIESEL S-10",        capacidade:15000 },
-      { id:"t8_3", nome:"TQ. 3", fuel:"GASOLINA COMUM",     capacidade:20000 },
-      { id:"t8_4", nome:"TQ. 4", fuel:"GASOLINA ADITIVADA", capacidade:10000 },
+      { id:"t8_1", nome:"TQ. 1", fuel:"ETANOL",             capacidade:30000, arq:"pleno_30k"},
+      { id:"t8_2", nome:"TQ. 2", fuel:"DIESEL S-10",        capacidade:15000, arq:"pleno_15k"},
+      { id:"t8_3", nome:"TQ. 3", fuel:"GASOLINA COMUM",     capacidade:20000, arq:"bi_v1"},
+      { id:"t8_4", nome:"TQ. 4", fuel:"GASOLINA ADITIVADA", capacidade:10000, arq:"bi_v1"},
     ],
     combustiveis: [
       { id:"etanol",             label:"ETANOL" },
@@ -118,10 +118,10 @@ const DB_ESTRUTURA = {
   },
   "P09": { nome: "P. BOMBOM MATRIZ",
     tanques: [
-      { id:"t9_1", nome:"TQ. 1", fuel:"GASOLINA COMUM",     capacidade:15000 },
-      { id:"t9_2", nome:"TQ. 2", fuel:"ETANOL",             capacidade:10000 },
-      { id:"t9_3", nome:"TQ. 3", fuel:"GASOLINA ADITIVADA", capacidade:10000 },
-      { id:"t9_4", nome:"TQ. 4", fuel:"ETANOL",             capacidade:10000 },
+      { id:"t9_1", nome:"TQ. 1", fuel:"GASOLINA COMUM",     capacidade:15000, arq:"pleno_15k"},
+      { id:"t9_2", nome:"TQ. 2", fuel:"ETANOL",             capacidade:10000, arq:"bi_v1"},
+      { id:"t9_3", nome:"TQ. 3", fuel:"GASOLINA ADITIVADA", capacidade:10000, arq:"bi_v2"},
+      { id:"t9_4", nome:"TQ. 4", fuel:"ETANOL",             capacidade:10000, arq:"bi_v1"},
     ],
     combustiveis: [
       { id:"gasolina_comum",     label:"GASOLINA COMUM" },
@@ -131,12 +131,12 @@ const DB_ESTRUTURA = {
   },
   "P10": { nome: "P. BRUNA",
     tanques: [
-      { id:"t10_1", nome:"TQ. 1", fuel:"ETANOL",             capacidade:30000 },
-      { id:"t10_2", nome:"TQ. 2", fuel:"DIESEL S-500",       capacidade:30000 },
-      { id:"t10_3", nome:"TQ. 3", fuel:"DIESEL S-10",        capacidade:15000 },
-      { id:"t10_4", nome:"TQ. 4", fuel:"DIESEL S-10",        capacidade:15000 },
-      { id:"t10_5", nome:"TQ. 5", fuel:"GASOLINA ADITIVADA", capacidade:10000 },
-      { id:"t10_6", nome:"TQ. 6", fuel:"GASOLINA COMUM",     capacidade:20000 },
+      { id:"t10_1", nome:"TQ. 1", fuel:"ETANOL",             capacidade:30000, arq:"pleno_30k"},
+      { id:"t10_2", nome:"TQ. 2", fuel:"DIESEL S-500",       capacidade:30000, arq:"pleno_30k"},
+      { id:"t10_3", nome:"TQ. 3", fuel:"DIESEL S-10",        capacidade:15000, arq:"bi_v1"},
+      { id:"t10_4", nome:"TQ. 4", fuel:"DIESEL S-10",        capacidade:15000, arq:"bi_v1"},
+      { id:"t10_5", nome:"TQ. 5", fuel:"GASOLINA ADITIVADA", capacidade:10000, arq:"bi_v1"},
+      { id:"t10_6", nome:"TQ. 6", fuel:"GASOLINA COMUM",     capacidade:20000, arq:"bi_v1"},
     ],
     combustiveis: [
       { id:"etanol",             label:"ETANOL" },
@@ -148,10 +148,10 @@ const DB_ESTRUTURA = {
   },
   "P11": { nome: "P. DIFERENCIAL",
     tanques: [
-      { id:"t11_1", nome:"TQ. 1", fuel:"GASOLINA COMUM",     capacidade:30000 },
-      { id:"t11_2", nome:"TQ. 2", fuel:"GASOLINA ADITIVADA", capacidade:15000 },
-      { id:"t11_3", nome:"TQ. 3", fuel:"ETANOL",             capacidade:15000 },
-      { id:"t11_4", nome:"TQ. 4", fuel:"DIESEL S-10",        capacidade:15000 },
+      { id:"t11_1", nome:"TQ. 1", fuel:"GASOLINA COMUM",     capacidade:30000, arq:"pleno_30k"},
+      { id:"t11_2", nome:"TQ. 2", fuel:"GASOLINA ADITIVADA", capacidade:15000, arq:"bi_v1"},
+      { id:"t11_3", nome:"TQ. 3", fuel:"ETANOL",             capacidade:15000, arq:"bi_v1"},
+      { id:"t11_4", nome:"TQ. 4", fuel:"DIESEL S-10",        capacidade:15000, arq:"pleno_15k"},
     ],
     combustiveis: [
       { id:"gasolina_comum",     label:"GASOLINA COMUM" },
@@ -162,12 +162,12 @@ const DB_ESTRUTURA = {
   },
   "P12": { nome: "P. ESPAÇO REAL",
     tanques: [
-      { id:"t12_1", nome:"TQ. 1", fuel:"GASOLINA ADITIVADA", capacidade:10000 },
-      { id:"t12_2", nome:"TQ. 2", fuel:"GASOLINA COMUM",     capacidade:20000 },
-      { id:"t12_3", nome:"TQ. 3", fuel:"GASOLINA COMUM",     capacidade:10000 },
-      { id:"t12_4", nome:"TQ. 4", fuel:"ETANOL",             capacidade:20000 },
-      { id:"t12_5", nome:"TQ. 5", fuel:"DIESEL S-500",       capacidade:15000 },
-      { id:"t12_6", nome:"TQ. 6", fuel:"DIESEL S-10",        capacidade:15000 },
+      { id:"t12_1", nome:"TQ. 1", fuel:"GASOLINA ADITIVADA", capacidade:10000, arq:"bi_v1"},
+      { id:"t12_2", nome:"TQ. 2", fuel:"GASOLINA COMUM",     capacidade:20000, arq:"bi_v1"},
+      { id:"t12_3", nome:"TQ. 3", fuel:"GASOLINA COMUM",     capacidade:10000, arq:"bi_v1"},
+      { id:"t12_4", nome:"TQ. 4", fuel:"ETANOL",             capacidade:20000, arq:"bi_v1"},
+      { id:"t12_5", nome:"TQ. 5", fuel:"DIESEL S-500",       capacidade:15000, arq:"bi_v1"},
+      { id:"t12_6", nome:"TQ. 6", fuel:"DIESEL S-10",        capacidade:15000, arq:"bi_v1"},
     ],
     combustiveis: [
       { id:"gasolina_aditivada", label:"GASOLINA ADITIVADA" },
@@ -179,10 +179,10 @@ const DB_ESTRUTURA = {
   },
   "P13": { nome: "P. FELIPAO",
     tanques: [
-      { id:"t13_1", nome:"TQ. 1", fuel:"DIESEL S-10",    capacidade:10000 },
-      { id:"t13_2", nome:"TQ. 2", fuel:"ETANOL",         capacidade:20000 },
-      { id:"t13_3", nome:"TQ. 3", fuel:"GASOLINA COMUM", capacidade:20000 },
-      { id:"t13_4", nome:"TQ. 4", fuel:"DIESEL S-500",   capacidade:10000 },
+      { id:"t13_1", nome:"TQ. 1", fuel:"DIESEL S-10",    capacidade:10000, arq:"bi_v1"},
+      { id:"t13_2", nome:"TQ. 2", fuel:"ETANOL",         capacidade:20000, arq:"bi_v1"},
+      { id:"t13_3", nome:"TQ. 3", fuel:"GASOLINA COMUM", capacidade:20000, arq:"bi_v1"},
+      { id:"t13_4", nome:"TQ. 4", fuel:"DIESEL S-500",   capacidade:10000, arq:"bi_v1"},
     ],
     combustiveis: [
       { id:"diesel_s_10",    label:"DIESEL S-10" },
@@ -193,9 +193,9 @@ const DB_ESTRUTURA = {
   },
   "P14": { nome: "P. GLÓRIA",
     tanques: [
-      { id:"t14_1", nome:"TQ. 1", fuel:"ETANOL",         capacidade:30000 },
-      { id:"t14_2", nome:"TQ. 2", fuel:"GASOLINA COMUM", capacidade:20000 },
-      { id:"t14_3", nome:"TQ. 3", fuel:"DIESEL S-10",    capacidade:10000 },
+      { id:"t14_1", nome:"TQ. 1", fuel:"ETANOL",         capacidade:30000, arq:"bi_v1"},
+      { id:"t14_2", nome:"TQ. 2", fuel:"GASOLINA COMUM", capacidade:20000, arq:"bi_v1"},
+      { id:"t14_3", nome:"TQ. 3", fuel:"DIESEL S-10",    capacidade:10000, arq:"pleno_10k"},
     ],
     combustiveis: [
       { id:"etanol",         label:"ETANOL" },
@@ -205,10 +205,10 @@ const DB_ESTRUTURA = {
   },
   "P15": { nome: "P. ITAPOA",
     tanques: [
-      { id:"t15_1", nome:"TQ. 1", fuel:"DIESEL S-10",        capacidade:10000 },
-      { id:"t15_2", nome:"TQ. 2", fuel:"ETANOL",             capacidade:10000 },
-      { id:"t15_5", nome:"TQ. 5", fuel:"GASOLINA ADITIVADA", capacidade:10000 },
-      { id:"t15_6", nome:"TQ. 6", fuel:"GASOLINA COMUM",     capacidade:30000 },
+      { id:"t15_1", nome:"TQ. 1", fuel:"DIESEL S-10",        capacidade:10000, arq:"bi_v1"},
+      { id:"t15_2", nome:"TQ. 2", fuel:"ETANOL",             capacidade:10000, arq:"bi_v2"},
+      { id:"t15_5", nome:"TQ. 5", fuel:"GASOLINA ADITIVADA", capacidade:10000, arq:"bi_v1"    },
+      { id:"t15_6", nome:"TQ. 6", fuel:"GASOLINA COMUM",     capacidade:30000, arq:"pleno_30k"},
     ],
     combustiveis: [
       { id:"diesel_s_10",        label:"DIESEL S-10" },
@@ -219,11 +219,11 @@ const DB_ESTRUTURA = {
   },
   "P16": { nome: "P. JA",
     tanques: [
-      { id:"t16_1", nome:"TQ. 1", fuel:"Gasolina Octapro",   capacidade:15000 },
-      { id:"t16_2", nome:"TQ. 2", fuel:"DIESEL S-10",        capacidade:15000 },
-      { id:"t16_3", nome:"TQ. 3", fuel:"ETANOL",             capacidade:15000 },
-      { id:"t16_4", nome:"TQ. 4", fuel:"GASOLINA ADITIVADA", capacidade:15000 },
-      { id:"t16_5", nome:"TQ. 5", fuel:"GASOLINA COMUM",     capacidade:30000 },
+      { id:"t16_1", nome:"TQ. 1", fuel:"Gasolina Octapro",   capacidade:15000, arq:"bi_v1"},
+      { id:"t16_2", nome:"TQ. 2", fuel:"DIESEL S-10",        capacidade:15000, arq:"bi_v1"},
+      { id:"t16_3", nome:"TQ. 3", fuel:"ETANOL",             capacidade:15000, arq:"bi_v1"},
+      { id:"t16_4", nome:"TQ. 4", fuel:"GASOLINA ADITIVADA", capacidade:15000, arq:"bi_v1"},
+      { id:"t16_5", nome:"TQ. 5", fuel:"GASOLINA COMUM",     capacidade:30000, arq:"pleno_30k"},
     ],
     combustiveis: [
       { id:"gasolina_octapro",   label:"Gasolina Octapro" },
@@ -235,10 +235,10 @@ const DB_ESTRUTURA = {
   },
   "P17": { nome: "P. JOCA",
     tanques: [
-      { id:"t17_1", nome:"TQ. 1", fuel:"GASOLINA COMUM", capacidade:15000 },
-      { id:"t17_2", nome:"TQ. 2", fuel:"DIESEL S-10",    capacidade:15000 },
-      { id:"t17_3", nome:"TQ. 3", fuel:"ETANOL",         capacidade:15000 },
-      { id:"t17_4", nome:"TQ. 4", fuel:"ETANOL",         capacidade:15000 },
+      { id:"t17_1", nome:"TQ. 1", fuel:"GASOLINA COMUM", capacidade:15000, arq:"bi_v1"},
+      { id:"t17_2", nome:"TQ. 2", fuel:"DIESEL S-10",    capacidade:15000, arq:"bi_v1"},
+      { id:"t17_3", nome:"TQ. 3", fuel:"ETANOL",         capacidade:15000, arq:"pleno_15k"},
+      { id:"t17_4", nome:"TQ. 4", fuel:"ETANOL",         capacidade:15000, arq:"pleno_15k"},
     ],
     combustiveis: [
       { id:"gasolina_comum", label:"GASOLINA COMUM" },
@@ -248,11 +248,11 @@ const DB_ESTRUTURA = {
   },
   "P18": { nome: "P. LEANDRO",
     tanques: [
-      { id:"t18_1", nome:"TQ. 1", fuel:"DIESEL S-500",       capacidade:15000 },
-      { id:"t18_2", nome:"TQ. 2", fuel:"DIESEL S-10",        capacidade:15000 },
-      { id:"t18_3", nome:"TQ. 3", fuel:"ETANOL",             capacidade:30000 },
-      { id:"t18_4", nome:"TQ. 4", fuel:"GASOLINA COMUM",     capacidade:20000 },
-      { id:"t18_5", nome:"TQ. 5", fuel:"GASOLINA ADITIVADA", capacidade:10000 },
+      { id:"t18_1", nome:"TQ. 1", fuel:"DIESEL S-500",       capacidade:15000, arq:"bi_v1"},
+      { id:"t18_2", nome:"TQ. 2", fuel:"DIESEL S-10",        capacidade:15000, arq:"bi_v1"},
+      { id:"t18_3", nome:"TQ. 3", fuel:"ETANOL",             capacidade:30000, arq:"pleno_30k"},
+      { id:"t18_4", nome:"TQ. 4", fuel:"GASOLINA COMUM",     capacidade:20000, arq:"bi_v1"},
+      { id:"t18_5", nome:"TQ. 5", fuel:"GASOLINA ADITIVADA", capacidade:10000, arq:"bi_v1"},
     ],
     combustiveis: [
       { id:"diesel_s_500",       label:"DIESEL S-500" },
@@ -264,11 +264,11 @@ const DB_ESTRUTURA = {
   },
   "P19": { nome: "P. LOURA EMPREENDIMENTOS",
     tanques: [
-      { id:"t19_1", nome:"TQ. 1", fuel:"ETANOL",             capacidade:30000 },
-      { id:"t19_2", nome:"TQ. 2", fuel:"DIESEL S-10",        capacidade:15000 },
-      { id:"t19_3", nome:"TQ. 3", fuel:"DIESEL S-500",       capacidade:15000 },
-      { id:"t19_4", nome:"TQ. 4", fuel:"GASOLINA COMUM",     capacidade:20000 },
-      { id:"t19_5", nome:"TQ. 5", fuel:"GASOLINA ADITIVADA", capacidade:10000 },
+      { id:"t19_1", nome:"TQ. 1", fuel:"ETANOL",             capacidade:30000, arq:"pleno_30k"},
+      { id:"t19_2", nome:"TQ. 2", fuel:"DIESEL S-10",        capacidade:15000, arq:"bi_v1"},
+      { id:"t19_3", nome:"TQ. 3", fuel:"DIESEL S-500",       capacidade:15000, arq:"bi_v1"},
+      { id:"t19_4", nome:"TQ. 4", fuel:"GASOLINA COMUM",     capacidade:20000, arq:"bi_v1"},
+      { id:"t19_5", nome:"TQ. 5", fuel:"GASOLINA ADITIVADA", capacidade:10000, arq:"bi_v1"},
     ],
     combustiveis: [
       { id:"etanol",             label:"ETANOL" },
@@ -280,11 +280,11 @@ const DB_ESTRUTURA = {
   },
   "P20": { nome: "P. MANGABEIRAS",
     tanques: [
-      { id:"t20_1", nome:"TQ. 1", fuel:"GASOLINA COMUM",     capacidade:20000 },
-      { id:"t20_2", nome:"TQ. 2", fuel:"GASOLINA ADITIVADA", capacidade:10000 },
-      { id:"t20_3", nome:"TQ. 3", fuel:"ETANOL",             capacidade:10000 },
-      { id:"t20_4", nome:"TQ. 4", fuel:"ETANOL",             capacidade:10000 },
-      { id:"t20_5", nome:"TQ. 5", fuel:"DIESEL S-10",        capacidade:10000 },
+      { id:"t20_1", nome:"TQ. 1", fuel:"GASOLINA COMUM",     capacidade:20000, arq:"bi_v1"},
+      { id:"t20_2", nome:"TQ. 2", fuel:"GASOLINA ADITIVADA", capacidade:10000, arq:"bi_v1"},
+      { id:"t20_3", nome:"TQ. 3", fuel:"ETANOL",             capacidade:10000, arq:"bi_v1"},
+      { id:"t20_4", nome:"TQ. 4", fuel:"ETANOL",             capacidade:10000, arq:"bi_v2"},
+      { id:"t20_5", nome:"TQ. 5", fuel:"DIESEL S-10",        capacidade:10000, arq:"bi_v1"},
     ],
     combustiveis: [
       { id:"gasolina_comum",     label:"GASOLINA COMUM" },
@@ -295,12 +295,12 @@ const DB_ESTRUTURA = {
   },
   "P21": { nome: "P. MIRAGEM JBRETAS",
     tanques: [
-      { id:"t21_1", nome:"TQ. 1", fuel:"GASOLINA COMUM",  capacidade:30000 },
-      { id:"t21_2", nome:"TQ. 2", fuel:"DIESEL S-500",    capacidade:30000 },
-      { id:"t21_3", nome:"TQ. 3", fuel:"Gasolina Grid",   capacidade:15000 },
-      { id:"t21_4", nome:"TQ. 4", fuel:"DIESEL S-10",     capacidade:15000 },
-      { id:"t21_5", nome:"TQ. 5", fuel:"ETANOL",          capacidade:15000 },
-      { id:"t21_6", nome:"TQ. 6", fuel:"GASOLINA COMUM",  capacidade:15000 },
+      { id:"t21_1", nome:"TQ. 1", fuel:"GASOLINA COMUM",  capacidade:30000, arq:"pleno_30k"},
+      { id:"t21_2", nome:"TQ. 2", fuel:"DIESEL S-500",    capacidade:30000, arq:"pleno_30k"},
+      { id:"t21_3", nome:"TQ. 3", fuel:"Gasolina Grid",   capacidade:15000, arq:"bi_v1"},
+      { id:"t21_4", nome:"TQ. 4", fuel:"DIESEL S-10",     capacidade:15000, arq:"bi_v1"},
+      { id:"t21_5", nome:"TQ. 5", fuel:"ETANOL",          capacidade:15000, arq:"bi_v1"},
+      { id:"t21_6", nome:"TQ. 6", fuel:"GASOLINA COMUM",  capacidade:15000, arq:"bi_v1"},
     ],
     combustiveis: [
       { id:"gasolina_comum",  label:"GASOLINA COMUM" },
@@ -312,11 +312,11 @@ const DB_ESTRUTURA = {
   },
   "P22": { nome: "PAIVA E PAIVA COMBUSTIVEL",
     tanques: [
-      { id:"t22_1", nome:"TQ. 1", fuel:"GASOLINA COMUM",     capacidade:30000 },
-      { id:"t22_2", nome:"TQ. 2", fuel:"ETANOL",             capacidade:10000 },
-      { id:"t22_3", nome:"TQ. 3", fuel:"DIESEL S-500",       capacidade:20000 },
-      { id:"t22_4", nome:"TQ. 4", fuel:"GASOLINA ADITIVADA", capacidade:10000 },
-      { id:"t22_5", nome:"TQ. 5", fuel:"DIESEL S-10",        capacidade:20000 },
+      { id:"t22_1", nome:"TQ. 1", fuel:"GASOLINA COMUM",     capacidade:30000, arq:"pleno_30k"},
+      { id:"t22_2", nome:"TQ. 2", fuel:"ETANOL",             capacidade:10000, arq:"bi_v1"},
+      { id:"t22_3", nome:"TQ. 3", fuel:"DIESEL S-500",       capacidade:20000, arq:"bi_v1"},
+      { id:"t22_4", nome:"TQ. 4", fuel:"GASOLINA ADITIVADA", capacidade:10000, arq:"bi_v1"},
+      { id:"t22_5", nome:"TQ. 5", fuel:"DIESEL S-10",        capacidade:20000, arq:"bi_v1"},
     ],
     combustiveis: [
       { id:"gasolina_comum",     label:"GASOLINA COMUM" },
@@ -343,12 +343,12 @@ const DB_ESTRUTURA = {
   },
   "P24": { nome: "P. PLANALTO",
     tanques: [
-      { id:"t24_1", nome:"TQ. 1", fuel:"GASOLINA ADITIVADA", capacidade:10000 },
-      { id:"t24_2", nome:"TQ. 2", fuel:"GASOLINA COMUM",     capacidade:20000 },
-      { id:"t24_3", nome:"TQ. 3", fuel:"DIESEL S-500",       capacidade:10000 },
-      { id:"t24_4", nome:"TQ. 4", fuel:"ETANOL",             capacidade:20000 },
-      { id:"t24_5", nome:"TQ. 5", fuel:"GASOLINA COMUM",     capacidade:15000 },
-      { id:"t24_6", nome:"TQ. 6", fuel:"DIESEL S-10",        capacidade:15000 },
+      { id:"t24_1", nome:"TQ. 1", fuel:"GASOLINA ADITIVADA", capacidade:10000, arq:"veederroot"},
+      { id:"t24_2", nome:"TQ. 2", fuel:"GASOLINA COMUM",     capacidade:20000, arq:"veederroot"},
+      { id:"t24_3", nome:"TQ. 3", fuel:"DIESEL S-500",       capacidade:10000, arq:"veederroot"},
+      { id:"t24_4", nome:"TQ. 4", fuel:"ETANOL",             capacidade:20000, arq:"veederroot"},
+      { id:"t24_5", nome:"TQ. 5", fuel:"GASOLINA COMUM",     capacidade:15000, arq:"veederroot"},
+      { id:"t24_6", nome:"TQ. 6", fuel:"DIESEL S-10",        capacidade:15000, arq:"veederroot"},
     ],
     combustiveis: [
       { id:"gasolina_aditivada", label:"GASOLINA ADITIVADA" },
@@ -360,12 +360,12 @@ const DB_ESTRUTURA = {
   },
   "P25": { nome: "P. QUATRO RODAS",
     tanques: [
-      { id:"t25_1", nome:"TQ. 1", fuel:"GASOLINA ADITIVADA", capacidade:10000 },
-      { id:"t25_2", nome:"TQ. 2", fuel:"DIESEL S-10",        capacidade:10000 },
-      { id:"t25_3", nome:"TQ. 3", fuel:"ETANOL",             capacidade:10000 },
-      { id:"t25_4", nome:"TQ. 4", fuel:"GASOLINA COMUM",     capacidade:30000 },
-      { id:"t25_5", nome:"TQ. 5", fuel:"ETANOL",             capacidade:15000 },
-      { id:"t25_6", nome:"TQ. 6", fuel:"GNV",                capacidade:30000 },
+      { id:"t25_1", nome:"TQ. 1", fuel:"GASOLINA ADITIVADA", capacidade:10000, arq:"bi_v1"},
+      { id:"t25_2", nome:"TQ. 2", fuel:"DIESEL S-10",        capacidade:10000, arq:"bi_v2"},
+      { id:"t25_3", nome:"TQ. 3", fuel:"ETANOL",             capacidade:10000, arq:"bi_v1"},
+      { id:"t25_4", nome:"TQ. 4", fuel:"GASOLINA COMUM",     capacidade:30000, arq:"pleno_30k"},
+      { id:"t25_5", nome:"TQ. 5", fuel:"ETANOL",             capacidade:15000, arq:"pleno_15k"},
+      { id:"t25_6", nome:"TQ. 6", fuel:"GNV",                capacidade:30000, arq:"gnv"},
     ],
     combustiveis: [
       { id:"gasolina_aditivada", label:"GASOLINA ADITIVADA" },
@@ -377,12 +377,12 @@ const DB_ESTRUTURA = {
   },
   "P26": { nome: "P. RODRIGO",
     tanques: [
-      { id:"t26_1", nome:"TQ. 1", fuel:"GASOLINA COMUM",     capacidade:15000 },
-      { id:"t26_2", nome:"TQ. 2", fuel:"ETANOL",             capacidade:15000 },
-      { id:"t26_3", nome:"TQ. 3", fuel:"GASOLINA COMUM",     capacidade:15000 },
-      { id:"t26_4", nome:"TQ. 4", fuel:"DIESEL S-500",       capacidade:15000 },
-      { id:"t26_5", nome:"TQ. 5", fuel:"GASOLINA ADITIVADA", capacidade:15000 },
-      { id:"t26_6", nome:"TQ. 6", fuel:"DIESEL S-10",        capacidade:15000 },
+      { id:"t26_1", nome:"TQ. 1", fuel:"GASOLINA COMUM",     capacidade:15000, arq:"bi_v1"},
+      { id:"t26_2", nome:"TQ. 2", fuel:"ETANOL",             capacidade:15000, arq:"bi_v1"},
+      { id:"t26_3", nome:"TQ. 3", fuel:"GASOLINA COMUM",     capacidade:15000, arq:"bi_v1"},
+      { id:"t26_4", nome:"TQ. 4", fuel:"DIESEL S-500",       capacidade:15000, arq:"bi_v1"},
+      { id:"t26_5", nome:"TQ. 5", fuel:"GASOLINA ADITIVADA", capacidade:15000, arq:"bi_v1"},
+      { id:"t26_6", nome:"TQ. 6", fuel:"DIESEL S-10",        capacidade:15000, arq:"bi_v1"},
     ],
     combustiveis: [
       { id:"gasolina_comum",     label:"GASOLINA COMUM" },
@@ -394,12 +394,12 @@ const DB_ESTRUTURA = {
   },
   "P27": { nome: "P. SANTA INES MINAS - FILIAL",
     tanques: [
-      { id:"t27_1", nome:"TQ. 1", fuel:"ETANOL",             capacidade:15000 },
-      { id:"t27_2", nome:"TQ. 2", fuel:"GASOLINA ADITIVADA", capacidade:15000 },
-      { id:"t27_3", nome:"TQ. 3", fuel:"ETANOL",             capacidade:15000 },
-      { id:"t27_4", nome:"TQ. 4", fuel:"DIESEL S-500",       capacidade:15000 },
-      { id:"t27_5", nome:"TQ. 5", fuel:"DIESEL S-10",        capacidade:15000 },
-      { id:"t27_6", nome:"TQ. 6", fuel:"GASOLINA COMUM",     capacidade:30000 },
+      { id:"t27_1", nome:"TQ. 1", fuel:"ETANOL",             capacidade:15000, arq:"pleno_15k"},
+      { id:"t27_2", nome:"TQ. 2", fuel:"GASOLINA ADITIVADA", capacidade:15000, arq:"bi_v1"},
+      { id:"t27_3", nome:"TQ. 3", fuel:"ETANOL",             capacidade:15000, arq:"bi_v1"},
+      { id:"t27_4", nome:"TQ. 4", fuel:"DIESEL S-500",       capacidade:15000, arq:"bi_v1"},
+      { id:"t27_5", nome:"TQ. 5", fuel:"DIESEL S-10",        capacidade:15000, arq:"bi_v1"},
+      { id:"t27_6", nome:"TQ. 6", fuel:"GASOLINA COMUM",     capacidade:30000, arq:"pleno_30k"},
     ],
     combustiveis: [
       { id:"etanol",             label:"ETANOL" },
@@ -411,10 +411,10 @@ const DB_ESTRUTURA = {
   },
   "P28": { nome: "P. SANTA INES MINAS",
     tanques: [
-      { id:"t28_1", nome:"TQ. 1", fuel:"ETANOL ADITIVADO",   capacidade:20000 },
-      { id:"t28_2", nome:"TQ. 2", fuel:"DIESEL S-10",        capacidade:10000 },
-      { id:"t28_3", nome:"TQ. 3", fuel:"GASOLINA COMUM",     capacidade:15000 },
-      { id:"t28_4", nome:"TQ. 4", fuel:"GASOLINA ADITIVADA", capacidade:15000 },
+      { id:"t28_1", nome:"TQ. 1", fuel:"ETANOL ADITIVADO",   capacidade:20000, arq:"bi_v1"},
+      { id:"t28_2", nome:"TQ. 2", fuel:"DIESEL S-10",        capacidade:10000, arq:"bi_v1"},
+      { id:"t28_3", nome:"TQ. 3", fuel:"GASOLINA COMUM",     capacidade:15000, arq:"bi_v1"},
+      { id:"t28_4", nome:"TQ. 4", fuel:"GASOLINA ADITIVADA", capacidade:15000, arq:"bi_v1"},
     ],
     combustiveis: [
       { id:"etanol_aditivado",   label:"ETANOL ADITIVADO" },
@@ -425,10 +425,10 @@ const DB_ESTRUTURA = {
   },
   "P29": { nome: "P. SANTA MARIA",
     tanques: [
-      { id:"t29_1", nome:"TQ. 1", fuel:"ETANOL",         capacidade:30000 },
-      { id:"t29_2", nome:"TQ. 2", fuel:"Gasolina Grid",  capacidade:15000 },
-      { id:"t29_3", nome:"TQ. 3", fuel:"GASOLINA COMUM", capacidade:15000 },
-      { id:"t29_4", nome:"TQ. 4", fuel:"DIESEL S-10",    capacidade:15000 },
+      { id:"t29_1", nome:"TQ. 1", fuel:"ETANOL",         capacidade:30000, arq:"pleno_30k"},
+      { id:"t29_2", nome:"TQ. 2", fuel:"Gasolina Grid",  capacidade:15000, arq:"bi_v1"},
+      { id:"t29_3", nome:"TQ. 3", fuel:"GASOLINA COMUM", capacidade:15000, arq:"bi_v1"},
+      { id:"t29_4", nome:"TQ. 4", fuel:"DIESEL S-10",    capacidade:15000, arq:"pleno_15k"},
     ],
     combustiveis: [
       { id:"etanol",          label:"ETANOL" },
@@ -439,9 +439,9 @@ const DB_ESTRUTURA = {
   },
   "P30": { nome: "P. SAO BERNARDO",
     tanques: [
-      { id:"t30_1", nome:"TQ. 1", fuel:"GASOLINA COMUM",     capacidade:30000 },
-      { id:"t30_2", nome:"TQ. 2", fuel:"GASOLINA ADITIVADA", capacidade:15000 },
-      { id:"t30_3", nome:"TQ. 3", fuel:"ETANOL",             capacidade:20000 },
+      { id:"t30_1", nome:"TQ. 1", fuel:"GASOLINA COMUM",     capacidade:30000, arq:"veederroot"},
+      { id:"t30_2", nome:"TQ. 2", fuel:"GASOLINA ADITIVADA", capacidade:15000, arq:"veederroot"},
+      { id:"t30_3", nome:"TQ. 3", fuel:"ETANOL",             capacidade:20000, arq:"veederroot"},
     ],
     combustiveis: [
       { id:"gasolina_comum",     label:"GASOLINA COMUM" },
@@ -451,10 +451,10 @@ const DB_ESTRUTURA = {
   },
   "P31": { nome: "P. SAO LUIZ RL",
     tanques: [
-      { id:"t31_1", nome:"TQ. 1", fuel:"GASOLINA COMUM", capacidade:20000 },
-      { id:"t31_2", nome:"TQ. 2", fuel:"DIESEL S-10",    capacidade:10000 },
-      { id:"t31_3", nome:"TQ. 3", fuel:"ETANOL",         capacidade:15000 },
-      { id:"t31_4", nome:"TQ. 4", fuel:"DIESEL S-500",   capacidade:15000 },
+      { id:"t31_1", nome:"TQ. 1", fuel:"GASOLINA COMUM", capacidade:20000, arq:"bi_v1"},
+      { id:"t31_2", nome:"TQ. 2", fuel:"DIESEL S-10",    capacidade:10000, arq:"bi_v1"},
+      { id:"t31_3", nome:"TQ. 3", fuel:"ETANOL",         capacidade:15000, arq:"bi_v1"},
+      { id:"t31_4", nome:"TQ. 4", fuel:"DIESEL S-500",   capacidade:15000, arq:"bi_v1"},
     ],
     combustiveis: [
       { id:"gasolina_comum", label:"GASOLINA COMUM" },
@@ -465,11 +465,11 @@ const DB_ESTRUTURA = {
   },
   "P32": { nome: "P. SERENA COLIBRI",
     tanques: [
-      { id:"t32_1", nome:"TQ. 1", fuel:"GASOLINA ADITIVADA", capacidade:15000 },
-      { id:"t32_2", nome:"TQ. 2", fuel:"ETANOL ADITIVADO",   capacidade:15000 },
-      { id:"t32_3", nome:"TQ. 3", fuel:"GASOLINA COMUM",     capacidade:30000 },
-      { id:"t32_4", nome:"TQ. 4", fuel:"DIESEL S-10",        capacidade:15000 },
-      { id:"t32_5", nome:"TQ. 5", fuel:"DIESEL S-500",       capacidade:15000 },
+      { id:"t32_1", nome:"TQ. 1", fuel:"GASOLINA ADITIVADA", capacidade:15000, arq:"veederroot"},
+      { id:"t32_2", nome:"TQ. 2", fuel:"ETANOL ADITIVADO",   capacidade:15000, arq:"veederroot"},
+      { id:"t32_3", nome:"TQ. 3", fuel:"GASOLINA COMUM",     capacidade:30000, arq:"veederroot"},
+      { id:"t32_4", nome:"TQ. 4", fuel:"DIESEL S-10",        capacidade:15000, arq:"veederroot"},
+      { id:"t32_5", nome:"TQ. 5", fuel:"DIESEL S-500",       capacidade:15000, arq:"veederroot"},
     ],
     combustiveis: [
       { id:"gasolina_aditivada", label:"GASOLINA ADITIVADA" },
@@ -481,11 +481,11 @@ const DB_ESTRUTURA = {
   },
   "P33": { nome: "P. TOPAZIO",
     tanques: [
-      { id:"t33_1", nome:"TQ. 1", fuel:"ETANOL",             capacidade:15000 },
-      { id:"t33_2", nome:"TQ. 2", fuel:"ETANOL",             capacidade:15000 },
-      { id:"t33_3", nome:"TQ. 3", fuel:"GASOLINA ADITIVADA", capacidade:15000 },
-      { id:"t33_4", nome:"TQ. 4", fuel:"DIESEL S-10",        capacidade:15000 },
-      { id:"t33_5", nome:"TQ. 5", fuel:"GASOLINA COMUM",     capacidade:30000 },
+      { id:"t33_1", nome:"TQ. 1", fuel:"ETANOL",             capacidade:15000, arq:"bi_v1"},
+      { id:"t33_2", nome:"TQ. 2", fuel:"ETANOL",             capacidade:15000, arq:"bi_v1"},
+      { id:"t33_3", nome:"TQ. 3", fuel:"GASOLINA ADITIVADA", capacidade:15000, arq:"pleno_15k"},
+      { id:"t33_4", nome:"TQ. 4", fuel:"DIESEL S-10",        capacidade:15000, arq:"pleno_15k"},
+      { id:"t33_5", nome:"TQ. 5", fuel:"GASOLINA COMUM",     capacidade:30000, arq:"pleno_30k"},
     ],
     combustiveis: [
       { id:"etanol",             label:"ETANOL" },
@@ -496,11 +496,11 @@ const DB_ESTRUTURA = {
   },
   "P34": { nome: "P. TRANCOSO",
     tanques: [
-      { id:"t34_1", nome:"TQ. 1", fuel:"GASOLINA COMUM",     capacidade:30000 },
-      { id:"t34_2", nome:"TQ. 2", fuel:"ETANOL ADITIVADO",   capacidade:15000 },
-      { id:"t34_3", nome:"TQ. 3", fuel:"GASOLINA ADITIVADA", capacidade:15000 },
-      { id:"t34_4", nome:"TQ. 4", fuel:"DIESEL S-10",        capacidade:15000 },
-      { id:"t34_5", nome:"TQ. 5", fuel:"GASOLINA COMUM",     capacidade:15000 },
+      { id:"t34_1", nome:"TQ. 1", fuel:"GASOLINA COMUM",     capacidade:30000, arq:"pleno_30k"},
+      { id:"t34_2", nome:"TQ. 2", fuel:"ETANOL ADITIVADO",   capacidade:15000, arq:"bi_v1"},
+      { id:"t34_3", nome:"TQ. 3", fuel:"GASOLINA ADITIVADA", capacidade:15000, arq:"bi_v1"},
+      { id:"t34_4", nome:"TQ. 4", fuel:"DIESEL S-10",        capacidade:15000, arq:"bi_v1"},
+      { id:"t34_5", nome:"TQ. 5", fuel:"GASOLINA COMUM",     capacidade:15000, arq:"bi_v1"},
     ],
     combustiveis: [
       { id:"gasolina_comum",     label:"GASOLINA COMUM" },
@@ -511,9 +511,9 @@ const DB_ESTRUTURA = {
   },
   "P35": { nome: "P. TUNEL",
     tanques: [
-      { id:"t35_1", nome:"TQ. 1", fuel:"ETANOL",             capacidade:30000 },
-      { id:"t35_2", nome:"TQ. 2", fuel:"GASOLINA ADITIVADA", capacidade:15000 },
-      { id:"t35_3", nome:"TQ. 3", fuel:"GASOLINA COMUM",     capacidade:15000 },
+      { id:"t35_1", nome:"TQ. 1", fuel:"ETANOL",             capacidade:30000, arq:"veederroot"},
+      { id:"t35_2", nome:"TQ. 2", fuel:"GASOLINA ADITIVADA", capacidade:15000, arq:"veederroot"},
+      { id:"t35_3", nome:"TQ. 3", fuel:"GASOLINA COMUM",     capacidade:15000, arq:"veederroot"},
     ],
     combustiveis: [
       { id:"etanol",             label:"ETANOL" },
@@ -523,13 +523,13 @@ const DB_ESTRUTURA = {
   },
   "P36": { nome: "P. URBANO FERRAZ",
     tanques: [
-      { id:"t36_1",   nome:"TQ. 1",   fuel:"GASOLINA COMUM",          capacidade: 30000 },
-      { id:"t36_2",   nome:"TQ. 2",   fuel:"Gasolina Premium Podium",  capacidade: 15000 },
-      { id:"t36_3",   nome:"TQ. 3",   fuel:"GASOLINA ADITIVADA",       capacidade: 15000 },
-      { id:"t36_4",   nome:"TQ. 4",   fuel:"GASOLINA COMUM",           capacidade: 15000 },
-      { id:"t36_5",   nome:"TQ. 5",   fuel:"DIESEL S-10",              capacidade: 15000 },
-      { id:"t36_6",   nome:"TQ. 6",   fuel:"ETANOL",                   capacidade: 30000 },
-      { id:"t36_136", nome:"TQ. 136", fuel:"GNV",                      capacidade: 90000 },
+      { id:"t36_1",   nome:"TQ. 1",   fuel:"GASOLINA COMUM",          capacidade: 30000, arq:"pleno_30k"},
+      { id:"t36_2",   nome:"TQ. 2",   fuel:"Gasolina Premium Podium",  capacidade: 15000, arq:"bi_v1"},
+      { id:"t36_3",   nome:"TQ. 3",   fuel:"GASOLINA ADITIVADA",       capacidade: 15000, arq:"bi_v1"},
+      { id:"t36_4",   nome:"TQ. 4",   fuel:"GASOLINA COMUM",           capacidade: 15000, arq:"bi_v1"},
+      { id:"t36_5",   nome:"TQ. 5",   fuel:"DIESEL S-10",              capacidade: 15000, arq:"bi_v1"},
+      { id:"t36_6",   nome:"TQ. 6",   fuel:"ETANOL",                   capacidade: 30000, arq:"pleno_30k"},
+      { id:"t36_136", nome:"TQ. 136", fuel:"GNV",                      capacidade: 90000, arq:"gnv"},
     ],
     combustiveis: [
       { id:"gasolina_comum",           label:"GASOLINA COMUM" },
@@ -542,13 +542,13 @@ const DB_ESTRUTURA = {
   },
   "P37": { nome: "P. BIANCA",
     tanques: [
-      { id:"t37_1", nome:"TQ. 1", fuel:"GASOLINA COMUM",     capacidade:10000 },
-      { id:"t37_2", nome:"TQ. 2", fuel:"ETANOL",             capacidade:10000 },
-      { id:"t37_3", nome:"TQ. 3", fuel:"GASOLINA ADITIVADA", capacidade:10000 },
-      { id:"t37_4", nome:"TQ. 4", fuel:"GASOLINA COMUM",     capacidade:15000 },
-      { id:"t37_5", nome:"TQ. 5", fuel:"DIESEL S-10",        capacidade:15000 },
-      { id:"t37_6", nome:"TQ. 6", fuel:"DIESEL S-500",       capacidade:15000 },
-      { id:"t37_7", nome:"TQ. 7", fuel:"DIESEL S-500",       capacidade:15000 },
+      { id:"t37_1", nome:"TQ. 1", fuel:"GASOLINA COMUM",     capacidade:10000, arq:"bi_v1"},
+      { id:"t37_2", nome:"TQ. 2", fuel:"ETANOL",             capacidade:10000, arq:"bi_v2"},
+      { id:"t37_3", nome:"TQ. 3", fuel:"GASOLINA ADITIVADA", capacidade:10000, arq:"bi_v1"},
+      { id:"t37_4", nome:"TQ. 4", fuel:"GASOLINA COMUM",     capacidade:15000, arq:"bi_v1"},
+      { id:"t37_5", nome:"TQ. 5", fuel:"DIESEL S-10",        capacidade:15000, arq:"bi_v1"},
+      { id:"t37_6", nome:"TQ. 6", fuel:"DIESEL S-500",       capacidade:15000, arq:"bi_v1"},
+      { id:"t37_7", nome:"TQ. 7", fuel:"DIESEL S-500",       capacidade:15000, arq:"bi_v1"},
     ],
     combustiveis: [
       { id:"gasolina_comum",     label:"GASOLINA COMUM" },
@@ -569,8 +569,13 @@ let CONCORRENTES = {};
 let CAMPO_EXTRA_COLETA = {};
 
 // Converte cm → litros usando a tabela carregada do servidor
-function cmToLitros(cm, capacidade) {
-  const tabela = ARQUEACAO[capacidade];
+// Para postos Veeder-Root: o gerente informa litros direto (cm já é litros)
+// Para GNV: sem tabela, retorna 0
+function cmToLitros(cm, capacidade, arq) {
+  // Veeder-Root e GNV — sem conversão por tabela
+  if (arq === 'veederroot' || arq === 'gnv') return cm;
+  // Busca tabela pela chave arq (novo sistema) ou capacidade (fallback legado)
+  const tabela = arq ? ARQUEACAO[arq] : ARQUEACAO[capacidade];
   if (!tabela || tabela.length === 0) return 0;
   if (cm <= 0) return 0;
   if (cm >= tabela.length) return tabela[tabela.length - 1];
