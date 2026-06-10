@@ -355,23 +355,40 @@ function buildTanques(tanques) {
   const body = document.getElementById('tanques-body');
   body.innerHTML = '';
   tanques.forEach(t => {
+    const isVR  = t.arq === 'veederroot';
+    const isGNV = t.arq === 'gnv';
     const row = document.createElement('div');
     row.className = 'tank-row';
+    // Veeder-Root: input de litros direto (sem stepper de cm)
+    // GNV: oculta input (sem medição)
+    const inputBlock = isGNV
+      ? `<div class="tank-vol" id="vol-${t.id}" style="color:var(--text3)">— GNV</div>`
+      : isVR
+        ? `<div class="tank-vol" id="vol-${t.id}">0 L</div>
+           <div class="stepper">
+             <button class="step-btn" onclick="stepChange('cm-${t.id}',-100)">−</button>
+             <input class="step-input" id="cm-${t.id}" value="0" type="number" min="0"
+               style="width:80px"
+               oninput="updateVol('${t.id}', ${t.capacidade}, '${t.arq || ''}')">
+             <button class="step-btn" onclick="stepChange('cm-${t.id}',100)">+</button>
+           </div>
+           <div style="font-size:0.7rem;color:var(--accent);margin-top:2px;text-align:center">Veeder-Root (litros)</div>`
+        : `<div class="tank-vol" id="vol-${t.id}">0 L</div>
+           <div class="stepper">
+             <button class="step-btn" onclick="stepChange('cm-${t.id}',-1)">−</button>
+             <input class="step-input" id="cm-${t.id}" value="0" type="number" min="0" max="260"
+               oninput="updateVol('${t.id}', ${t.capacidade}, '${t.arq || ''}')">
+             <button class="step-btn" onclick="stepChange('cm-${t.id}',1)">+</button>
+           </div>`;
     row.innerHTML = `
       <div class="tank-info">
         <div class="tank-fuel">
-          <span class="fuel-chip ${t.chip}"></span>${t.fuel}
+          <span class="fuel-chip ${t.chip || ''}"></span>${t.fuel}
         </div>
         <div class="tank-name">${t.nome}</div>
         <div class="tank-cap">Cap: ${t.capacidade.toLocaleString('pt-BR')} L</div>
       </div>
-      <div class="tank-vol" id="vol-${t.id}">0 L</div>
-      <div class="stepper">
-        <button class="step-btn" onclick="stepChange('cm-${t.id}',-1)">−</button>
-        <input class="step-input" id="cm-${t.id}" value="0" type="number" min="0" max="200"
-          oninput="updateVol('${t.id}', ${t.capacidade})">
-        <button class="step-btn" onclick="stepChange('cm-${t.id}',1)">+</button>
-      </div>
+      ${inputBlock}
     `;
     body.appendChild(row);
   });
@@ -398,9 +415,9 @@ function buildVendas(combustiveis) {
   });
 }
 
-function updateVol(id, cap) {
+function updateVol(id, cap, arq) {
   const cm = parseInt(document.getElementById('cm-' + id).value) || 0;
-  const vol = cmToLitros(cm, cap);
+  const vol = cmToLitros(cm, cap, arq);
   document.getElementById('vol-' + id).textContent = vol.toLocaleString('pt-BR') + ' L';
 }
 
@@ -436,9 +453,14 @@ function salvarFechamento() {
   btn.disabled = true;
 
   const tanqueInfo = currentPosto.tanques.map(t => {
-    const cm = document.getElementById('cm-' + t.id)?.value || 0;
-    const vol = cmToLitros(parseInt(cm), t.capacidade);
-    return `${t.nome} (${t.fuel}): ${cm}cm = ${vol.toLocaleString('pt-BR')}L`;
+    const cm  = document.getElementById('cm-' + t.id)?.value || 0;
+    const vol = (t.arq === 'gnv') ? 0 : cmToLitros(parseInt(cm), t.capacidade, t.arq);
+    const unidade = t.arq === 'veederroot' ? 'L (VR)' : 'cm = ' + vol.toLocaleString('pt-BR') + 'L';
+    return t.arq === 'gnv'
+      ? `${t.nome} (${t.fuel}): GNV`
+      : t.arq === 'veederroot'
+        ? `${t.nome} (${t.fuel}): ${parseInt(cm).toLocaleString('pt-BR')}L`
+        : `${t.nome} (${t.fuel}): ${cm}cm = ${vol.toLocaleString('pt-BR')}L`;
   }).join(' | ');
 
   const vendasInfo = currentPosto.combustiveis.map(c => {
