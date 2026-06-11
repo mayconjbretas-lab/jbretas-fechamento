@@ -1,5 +1,23 @@
 // JBRETAS — App: Login, Fechamento, Funções principais
 
+// ================================================================
+// ORDEM PADRÃO DE COMBUSTÍVEIS — mesma do Apps Script (ORDEM_COMB)
+// G.C → G.A → Grid → ET → ET.AD → DS10 → DS500 → Octapro → Podium → GNV
+// Usada para ordenar tanques no app igual à planilha
+// ================================================================
+const ORDEM_COMB_APP = [
+  'GASOLINA COMUM',
+  'GASOLINA ADITIVADA',
+  'Gasolina Grid',
+  'ETANOL',
+  'ETANOL ADITIVADO',
+  'DIESEL S-10',
+  'DIESEL S-500',
+  'Gasolina Octapro',
+  'Gasolina Premium Podium',
+  'GNV'
+];
+
 let currentUser = null;
 let currentPosto = null;
 
@@ -163,15 +181,13 @@ function buildCarga(combustiveis) {
 
 /* Formata o input de carga com ponto de milhar enquanto digita */
 function formatCargaInput(el) {
-  // Remove tudo que não for dígito
   const digits = el.value.replace(/\D/g, '');
   const num    = parseInt(digits) || 0;
   el.dataset.val = num;
-  // Exibe com ponto de milhar
   el.value = num === 0 ? '0' : num.toLocaleString('pt-BR');
 }
 
-/* Stepper dos campos de carga — usa dataset.val para guardar o valor numérico */
+/* Stepper dos campos de carga */
 function stepCarga(id, delta) {
   const el  = document.getElementById(id);
   const val = parseInt(el.dataset.val) || 0;
@@ -225,7 +241,6 @@ async function doLogin() {
   errEl.style.display = 'none';
   if (btn) { btn.disabled = true; btn.textContent = '⏳ Entrando...'; }
 
-  // Valida no servidor e carrega arqueação + concorrentes + campo extra
   const usuario = await carregarDadosSecretos(email, senha);
 
   if (btn) { btn.disabled = false; btn.textContent = '▶ ENTRAR'; }
@@ -235,14 +250,12 @@ async function doLogin() {
     return;
   }
 
-  // Encontra o posto pela chave retornada pelo servidor
   const foundPosto = DB[usuario.postoKey];
   if (!foundPosto) {
     errEl.style.display = 'block';
     return;
   }
 
-  /* Salvar ou limpar credenciais conforme checkbox */
   try {
     if (lembrar) {
       localStorage.setItem('jbretas_remember', JSON.stringify({ email, senha }));
@@ -264,7 +277,6 @@ document.getElementById('login-senha').addEventListener('keydown', e => {
 function doLogout() {
   currentUser = null;
   currentPosto = null;
-  /* Não limpa o campo se "lembrar de mim" estava ativo */
   const saved = JSON.parse(localStorage.getItem('jbretas_remember') || 'null');
   if (!saved) {
     document.getElementById('login-email').value = '';
@@ -280,8 +292,7 @@ function showScreen(name) {
 
 /* =====================  APP  ===================== */
 
-// Data do relatório — padrão = ontem (gerente envia hoje o relatório de ontem)
-let dataRelatorio = null; // será definida no initApp
+let dataRelatorio = null;
 
 function getOntem() {
   const d = new Date();
@@ -290,7 +301,6 @@ function getOntem() {
 }
 
 function dateToInputValue(d) {
-  // Formato YYYY-MM-DD para input type=date
   const y = d.getFullYear();
   const m = String(d.getMonth() + 1).padStart(2, '0');
   const day = String(d.getDate()).padStart(2, '0');
@@ -302,7 +312,6 @@ function dateToBR(d) {
 }
 
 function inputValueToDate(val) {
-  // val = "YYYY-MM-DD"
   const [y, m, d] = val.split('-').map(Number);
   return new Date(y, m - 1, d);
 }
@@ -330,7 +339,6 @@ function initApp() {
   const posto = currentPosto;
   const initials = gerente.split(' ').map(w => w[0]).slice(0,2).join('');
 
-  // Padrão: ontem (relatório enviado hoje referente a ontem)
   const ontem = getOntem();
   dataRelatorio = ontem;
   const inputVal = dateToInputValue(ontem);
@@ -344,7 +352,18 @@ function initApp() {
   document.getElementById('card-data-input').value = inputVal;
   document.getElementById('page-date').textContent = dateStr;
 
-  buildTanques(posto.tanques);
+  // ================================================================
+  // Reordena tanques pela ORDEM_COMB_APP — igual à planilha
+  // G.C → G.A → Grid → ET → ET.AD → DS10 → DS500 → Octapro → Podium → GNV
+  // Dentro do mesmo combustível, mantém a ordem original (TQ.1 antes TQ.2)
+  // ================================================================
+  const tanquesOrdenados = posto.tanques.slice().sort((a, b) => {
+    const ia = ORDEM_COMB_APP.indexOf(a.fuel);
+    const ib = ORDEM_COMB_APP.indexOf(b.fuel);
+    return (ia === -1 ? 99 : ia) - (ib === -1 ? 99 : ib);
+  });
+
+  buildTanques(tanquesOrdenados);
   buildVendas(posto.combustiveis);
   updateTotals();
   buildCarga(posto.combustiveis);
@@ -359,8 +378,6 @@ function buildTanques(tanques) {
     const isGNV = t.arq === 'gnv';
     const row = document.createElement('div');
     row.className = 'tank-row';
-    // Veeder-Root: input de litros direto (sem stepper de cm)
-    // GNV: oculta input (sem medição)
     const inputBlock = isGNV
       ? `<div class="tank-vol" id="vol-${t.id}" style="color:var(--text3)">— GNV</div>`
       : isVR
@@ -452,10 +469,16 @@ function salvarFechamento() {
   btn.textContent = '⏳ Salvando...';
   btn.disabled = true;
 
-  const tanqueInfo = currentPosto.tanques.map(t => {
+  // Monta string de tanques na ORDEM_COMB_APP (igual à exibição e à planilha)
+  const tanquesOrdenados = currentPosto.tanques.slice().sort((a, b) => {
+    const ia = ORDEM_COMB_APP.indexOf(a.fuel);
+    const ib = ORDEM_COMB_APP.indexOf(b.fuel);
+    return (ia === -1 ? 99 : ia) - (ib === -1 ? 99 : ib);
+  });
+
+  const tanqueInfo = tanquesOrdenados.map(t => {
     const cm  = document.getElementById('cm-' + t.id)?.value || 0;
     const vol = (t.arq === 'gnv') ? 0 : cmToLitros(parseInt(cm), t.capacidade, t.arq);
-    const unidade = t.arq === 'veederroot' ? 'L (VR)' : 'cm = ' + vol.toLocaleString('pt-BR') + 'L';
     return t.arq === 'gnv'
       ? `${t.nome} (${t.fuel}): GNV`
       : t.arq === 'veederroot'
@@ -473,7 +496,6 @@ function salvarFechamento() {
   const lubSoutag = document.getElementById('lub-soutag')?.value || 0;
   const lubDia    = document.getElementById('lub-dia')?.value || 0;
 
-  /* Carga por combustível */
   const cargaInfo = currentPosto.combustiveis.map(c => {
     const el = document.getElementById('carga-' + c.id);
     const litros = cargaRespondida === 'sim'
@@ -483,8 +505,8 @@ function salvarFechamento() {
   }).join(' | ');
 
   const now  = new Date();
-  const data = dateToBR(dataRelatorio);  // data do relatório (ontem por padrão)
-  const hora = now.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' }); // hora do envio
+  const data = dateToBR(dataRelatorio);
+  const hora = now.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
 
   const payload = {
     data,
