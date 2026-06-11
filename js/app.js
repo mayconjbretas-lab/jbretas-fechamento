@@ -3,6 +3,14 @@
 let currentUser = null;
 let currentPosto = null;
 
+// Ordem igual à planilha: G.C → G.A → Grid → ET → ET.AD → DS10 → DS500 → Octapro → Podium → GNV
+const ORDEM_COMB_APP = [
+  'GASOLINA COMUM','GASOLINA ADITIVADA','Gasolina Grid',
+  'ETANOL','ETANOL ADITIVADO',
+  'DIESEL S-10','DIESEL S-500',
+  'Gasolina Octapro','Gasolina Premium Podium','GNV'
+];
+
 /* =====================  LOGIN  ===================== */
 
 /* Carregar credenciais salvas ao iniciar */
@@ -344,7 +352,14 @@ function initApp() {
   document.getElementById('card-data-input').value = inputVal;
   document.getElementById('page-date').textContent = dateStr;
 
-  buildTanques(posto.tanques);
+  // MUDANÇA 1: reordena tanques igual à planilha antes de exibir
+  const tanquesOrdenados = posto.tanques.slice().sort((a, b) => {
+    const ia = ORDEM_COMB_APP.indexOf(a.fuel);
+    const ib = ORDEM_COMB_APP.indexOf(b.fuel);
+    return (ia === -1 ? 99 : ia) - (ib === -1 ? 99 : ib);
+  });
+
+  buildTanques(tanquesOrdenados);
   buildVendas(posto.combustiveis);
   updateTotals();
   buildCarga(posto.combustiveis);
@@ -452,7 +467,14 @@ function salvarFechamento() {
   btn.textContent = '⏳ Salvando...';
   btn.disabled = true;
 
-  const tanqueInfo = currentPosto.tanques.map(t => {
+  // MUDANÇA 2: monta tanqueInfo na mesma ordem da planilha
+  const tanquesOrdenadosSave = currentPosto.tanques.slice().sort((a, b) => {
+    const ia = ORDEM_COMB_APP.indexOf(a.fuel);
+    const ib = ORDEM_COMB_APP.indexOf(b.fuel);
+    return (ia === -1 ? 99 : ia) - (ib === -1 ? 99 : ib);
+  });
+
+  const tanqueInfo = tanquesOrdenadosSave.map(t => {
     const cm  = document.getElementById('cm-' + t.id)?.value || 0;
     const vol = (t.arq === 'gnv') ? 0 : cmToLitros(parseInt(cm), t.capacidade, t.arq);
     const unidade = t.arq === 'veederroot' ? 'L (VR)' : 'cm = ' + vol.toLocaleString('pt-BR') + 'L';
