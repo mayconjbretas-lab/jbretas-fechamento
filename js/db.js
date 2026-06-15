@@ -411,10 +411,10 @@ const DB_ESTRUTURA = {
   },
   "P28": { nome: "P. SANTA INES MINAS",
     tanques: [
-      { id:"t28_1", nome:"TQ. 1", fuel:"ETANOL ADITIVADO",   capacidade:20000, arq:"bi_10k" },
-      { id:"t28_2", nome:"TQ. 2", fuel:"DIESEL S-10",        capacidade:10000, arq:"bi_15k" },
+      { id:"t28_1", nome:"TQ. 1", fuel:"ETANOL ADITIVADO",   capacidade:20000, arq:"bi_20k" },
+      { id:"t28_2", nome:"TQ. 2", fuel:"DIESEL S-10",        capacidade:10000, arq:"bi_10k" },
       { id:"t28_3", nome:"TQ. 3", fuel:"GASOLINA COMUM",     capacidade:15000, arq:"bi_15k" },
-      { id:"t28_4", nome:"TQ. 4", fuel:"GASOLINA ADITIVADA", capacidade:15000, arq:"bi_20k" },
+      { id:"t28_4", nome:"TQ. 4", fuel:"GASOLINA ADITIVADA", capacidade:15000, arq:"bi_15k" },
     ],
     combustiveis: [
       { id:"etanol_aditivado",   label:"ETANOL ADITIVADO" },
