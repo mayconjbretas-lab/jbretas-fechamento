@@ -1,4 +1,4 @@
-  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
   :root {
     --bg: #0d0f12;
@@ -587,6 +587,18 @@
     border: 1px solid var(--border2);
     border-radius: 8px;
     overflow: hidden;
+  }
+
+  .stepper.erro {
+    border-color: var(--danger);
+    box-shadow: 0 0 0 3px rgba(255,77,109,0.15);
+    animation: stepperShake 0.3s;
+  }
+
+  @keyframes stepperShake {
+    0%, 100% { transform: translateX(0); }
+    25% { transform: translateX(-4px); }
+    75% { transform: translateX(4px); }
   }
 
   .step-btn {
@@ -1220,4 +1232,3 @@
 .btn-salvar-copasa:hover { background: var(--accent2); }
 .btn-salvar-copasa:disabled { opacity: 0.5; cursor: not-allowed; }
 /* ===================== /COPASA ===================== */
-
