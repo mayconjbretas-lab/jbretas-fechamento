@@ -434,6 +434,9 @@ function updateVol(id, cap, arq) {
   const cm = parseInt(document.getElementById('cm-' + id).value) || 0;
   const vol = cmToLitros(cm, cap, arq);
   document.getElementById('vol-' + id).textContent = vol.toLocaleString('pt-BR') + ' L';
+  // Limpa o destaque de erro assim que o gerente começa a preencher
+  const stepperEl = document.getElementById('cm-' + id)?.closest('.stepper');
+  if (stepperEl) stepperEl.classList.remove('erro');
 }
 
 function stepChange(id, delta) {
@@ -450,15 +453,62 @@ function updateTotals() {
   let total = 0;
   currentPosto.combustiveis.forEach(c => {
     const el = document.getElementById('venda-' + c.id);
-    if (el) total += parseInt(el.value) || 0;
+    if (el) {
+      total += parseInt(el.value) || 0;
+      // Limpa o destaque de erro assim que o gerente começa a preencher
+      const stepperEl = el.closest('.stepper');
+      if (stepperEl) stepperEl.classList.remove('erro');
+    }
   });
   document.getElementById('total-vendas').textContent = total.toLocaleString('pt-BR') + ' L';
 }
+
+/* ===== VALIDAÇÃO OBRIGATÓRIA — MEDIÇÃO E VENDA ===== */
+function limparErrosMedicaoVenda() {
+  document.querySelectorAll('#tanques-body .stepper.erro, #vendas-body .stepper.erro')
+    .forEach(el => el.classList.remove('erro'));
+}
+
+function validarMedicaoVenda() {
+  if (!currentPosto) return true;
+  limparErrosMedicaoVenda();
+
+  // Medição de tanques — todo tanque com leitura (exceto GNV) precisa ter valor > 0
+  for (const t of currentPosto.tanques) {
+    if (t.arq === 'gnv') continue; // GNV não tem campo de medição
+    const input = document.getElementById('cm-' + t.id);
+    const val = parseInt(input?.value) || 0;
+    if (val <= 0) {
+      input.closest('.stepper')?.classList.add('erro');
+      input.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      input.focus();
+      showToast('Medição obrigatória', `Preencha a medição de "${t.nome} (${t.fuel})" antes de salvar.`);
+      return false;
+    }
+  }
+
+  // Vendas — todo combustível precisa ter litros vendidos preenchidos (> 0)
+  for (const c of currentPosto.combustiveis) {
+    const input = document.getElementById('venda-' + c.id);
+    const val = parseInt(input?.value) || 0;
+    if (val <= 0) {
+      input.closest('.stepper')?.classList.add('erro');
+      input.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      input.focus();
+      showToast('Venda obrigatória', `Preencha a venda de "${c.label}" antes de salvar.`);
+      return false;
+    }
+  }
+
+  return true;
+}
+/* ===== /VALIDAÇÃO OBRIGATÓRIA — MEDIÇÃO E VENDA ===== */
 
 /* =====================  SAVE  ===================== */
 const SHEETS_URL = window._SHEETS_URL;
 
 function salvarFechamento() {
+  if (!validarMedicaoVenda()) return;
   if (!cargaRespondida) {
     showToast('Atenção', 'Responda a seção "Recebeu Carga Hoje?" antes de salvar.');
     return;
