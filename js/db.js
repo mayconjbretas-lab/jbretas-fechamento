@@ -66,8 +66,8 @@ const DB_ESTRUTURA = {
     tanques: [
       { id:"t5_1", nome:"TQ. 1", fuel:"ETANOL",             capacidade:10000, arq:"veederroot" },
       { id:"t5_2", nome:"TQ. 2", fuel:"GASOLINA ADITIVADA", capacidade:10000, arq:"veederroot" },
-      { id:"t5_3", nome:"TQ. 3", fuel:"GASOLINA COMUM",     capacidade:10000, arq:"bi_10k"    },
-      { id:"t5_4", nome:"TQ. 4", fuel:"GASOLINA COMUM",     capacidade:15000, arq:"pleno_15k" },
+      { id:"t5_3", nome:"TQ. 3", fuel:"GASOLINA COMUM",     capacidade:10000, arq:"veederroot"    },
+      { id:"t5_4", nome:"TQ. 4", fuel:"GASOLINA COMUM",     capacidade:15000, arq:"veederroot" },
     ],
     combustiveis: [
       { id:"etanol",             label:"ETANOL" },
@@ -77,9 +77,9 @@ const DB_ESTRUTURA = {
   },
   "P06": { nome: "P. BARBOSA - DUDU",
     tanques: [
-      { id:"t6_1", nome:"TQ. 1", fuel:"ETANOL",         capacidade:15000, arq:"bi_15k"    },
-      { id:"t6_2", nome:"TQ. 2", fuel:"DIESEL S-10",    capacidade:15000, arq:"bi_15k"    },
-      { id:"t6_3", nome:"TQ. 3", fuel:"GASOLINA COMUM", capacidade:30000, arq:"pleno_30k" },
+      { id:"t6_1", nome:"TQ. 1", fuel:"ETANOL",         capacidade:15000, arq:"veederroot"    },
+      { id:"t6_2", nome:"TQ. 2", fuel:"DIESEL S-10",    capacidade:15000, arq:"veederroot"    },
+      { id:"t6_3", nome:"TQ. 3", fuel:"GASOLINA COMUM", capacidade:30000, arq:"veederroot" },
     ],
     combustiveis: [
       { id:"etanol",         label:"ETANOL" },
@@ -92,8 +92,8 @@ const DB_ESTRUTURA = {
       { id:"t7_1", nome:"TQ. 1", fuel:"ETANOL",         capacidade:15000, arq:"bi_15k"    },
       { id:"t7_2", nome:"TQ. 2", fuel:"GASOLINA COMUM", capacidade:15000, arq:"bi_15k"    },
       { id:"t7_3", nome:"TQ. 3", fuel:"DIESEL S-10",    capacidade:30000, arq:"pleno_30k" },
-      { id:"t7_4", nome:"TQ. 4", fuel:"GASOLINA COMUM", capacidade:20000, arq:"bi_20k"   },
-      { id:"t7_5", nome:"TQ. 5", fuel:"DIESEL S-500",   capacidade:10000, arq:"bi_10k"   },
+      { id:"t7_4", nome:"TQ. 4", fuel:"GASOLINA COMUM", capacidade:10000, arq:"bi_10k"   },
+      { id:"t7_5", nome:"TQ. 5", fuel:"DIESEL S-500",   capacidade:20000, arq:"bi_20k"   },
     ],
     combustiveis: [
       { id:"etanol",         label:"ETANOL" },
