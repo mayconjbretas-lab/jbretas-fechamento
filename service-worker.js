@@ -1,4 +1,4 @@
-const CACHE_NAME = 'jbretas-v6'; // ← incrementado
+const CACHE_NAME = 'jbretas-v5';
 const ASSETS = [
   './index.html',
   './manifest.json',
@@ -8,18 +8,13 @@ const ASSETS = [
   './js/coleta.js',
   './js/copasa.js',
 ];
+
+// Arquivos que SEMPRE devem vir da rede (nunca do cache)
 const NETWORK_FIRST = [
   './js/db.js',
   './js/app.js',
   './js/coleta.js',
   './js/copasa.js',
-];
-
-// Requisições para esses domínios NUNCA passam pelo cache
-const BYPASS_DOMAINS = [
-  'jbretas-api-service-production.up.railway.app',
-  'script.google.com',
-  'api.emailjs.com',
 ];
 
 self.addEventListener('install', event => {
@@ -40,14 +35,8 @@ self.addEventListener('activate', event => {
 
 self.addEventListener('fetch', event => {
   const url = new URL(event.request.url);
-
-  // API Railway e Apps Script: sempre vai para rede, nunca cacheia
-  if (BYPASS_DOMAINS.some(d => url.hostname.includes(d))) {
-    event.respondWith(fetch(event.request));
-    return;
-  }
-
   const isNetworkFirst = NETWORK_FIRST.some(f => url.pathname.endsWith(f.replace('./', '/')));
+
   if (isNetworkFirst) {
     event.respondWith(
       fetch(event.request)
