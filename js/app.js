@@ -1,19 +1,19 @@
 // JBRETAS — App: Login, Fechamento, Funções principais
+// v2.0 — Migrado para Railway API (sem Apps Script)
 
 let currentUser = null;
 let currentPosto = null;
+let JWT_TOKEN = null;
 
-// Ordem igual à planilha: G.C → G.A → Grid → ET → ET.AD → DS10 → DS500 → Octapro → Podium → GNV
+const API_URL = 'https://jbretas-api-service-production.up.railway.app';
+
 const ORDEM_COMB_APP = [
   'GASOLINA COMUM','GASOLINA ADITIVADA','Gasolina Grid',
-  'ETANOL','ETANOL ADITIVADO',
-  'DIESEL S-10','DIESEL S-500',
+  'ETANOL','ETANOL ADITIVADO','DIESEL S-10','DIESEL S-500',
   'Gasolina Octapro','Gasolina Premium Podium','GNV'
 ];
 
 /* =====================  LOGIN  ===================== */
-
-/* Carregar credenciais salvas ao iniciar */
 (function() {
   try {
     const saved = JSON.parse(localStorage.getItem('jbretas_remember') || 'null');
@@ -25,17 +25,6 @@ const ORDEM_COMB_APP = [
   } catch(e) {}
 })();
 
-/* ===================== ESQUECI MINHA SENHA — EmailJS =====================
-   Configure suas chaves após criar conta em https://www.emailjs.com
-   Template sugerido:
-     Para: {{to_email}}
-     Assunto: JBRETAS — Sua senha de acesso
-     Corpo: Olá {{to_name}}, sua senha é: {{senha}} — Posto: {{posto}}
-   ======================================================================== */
-const EMAILJS_SERVICE_ID  = 'SEU_SERVICE_ID';   // ex: 'service_abc123'
-const EMAILJS_TEMPLATE_ID = 'SEU_TEMPLATE_ID';  // ex: 'template_xyz456'
-// PUBLIC_KEY já configurada no <head>
-
 function abrirModalSenha() {
   document.getElementById('modal-senha').classList.add('active');
   document.getElementById('recuperar-email').value = '';
@@ -46,12 +35,9 @@ function abrirModalSenha() {
   document.getElementById('btn-recuperar').textContent = '📧 ENVIAR SENHA POR E-MAIL';
   setTimeout(() => document.getElementById('recuperar-email').focus(), 100);
 }
-
 function fecharModalSenha() {
   document.getElementById('modal-senha').classList.remove('active');
 }
-
-// Fecha modal ao clicar fora do card
 document.addEventListener('DOMContentLoaded', function() {
   document.getElementById('modal-senha').addEventListener('click', function(e) {
     if (e.target === this) fecharModalSenha();
@@ -61,91 +47,60 @@ document.addEventListener('DOMContentLoaded', function() {
 async function enviarSenha() {
   const email = document.getElementById('recuperar-email').value.trim().toLowerCase();
   const btn   = document.getElementById('btn-recuperar');
-  const msg   = document.getElementById('modal-msg');
-
-  msg.style.display = 'none';
-
-  if (!email) {
-    exibirMsgModal('Por favor, informe seu e-mail.', 'err');
-    return;
-  }
-
-  if (EMAILJS_SERVICE_ID === 'SEU_SERVICE_ID') {
-    exibirMsgModal('⚠ Recuperação de senha não configurada. Contate o administrador.', 'err');
-    return;
-  }
-
+  document.getElementById('modal-msg').style.display = 'none';
+  if (!email) { exibirMsgModal('Por favor, informe seu e-mail.', 'err'); return; }
   btn.disabled = true;
   btn.textContent = '⏳ Enviando...';
-
   try {
-    // Busca dados do usuário no servidor (sem expor senhas no front)
     const url  = window._SHEETS_URL + '?tipo=recuperar&email=' + encodeURIComponent(email);
     const resp = await fetch(url);
     const json = await resp.json();
-
     if (!json || json.erro || !json.encontrado) {
       exibirMsgModal('E-mail não encontrado no sistema.', 'err');
       btn.disabled = false;
       btn.textContent = '📧 ENVIAR SENHA POR E-MAIL';
       return;
     }
-
-    await emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, {
-      to_email: json.email,
-      to_name:  json.gerente,
-      senha:    json.senha,
-      posto:    json.posto,
+    await emailjs.send('SEU_SERVICE_ID', 'SEU_TEMPLATE_ID', {
+      to_email: json.email, to_name: json.gerente, senha: json.senha, posto: json.posto,
     });
-    exibirMsgModal('✅ E-mail enviado! Verifique sua caixa de entrada.', 'ok');
+    exibirMsgModal('✅ E-mail enviado!', 'ok');
     btn.textContent = '✅ ENVIADO';
     setTimeout(fecharModalSenha, 3000);
   } catch (err) {
-    console.error('Erro:', err);
-    exibirMsgModal('Erro ao enviar e-mail. Tente novamente ou contate o administrador.', 'err');
+    exibirMsgModal('Erro ao enviar e-mail.', 'err');
     btn.disabled = false;
     btn.textContent = '📧 ENVIAR SENHA POR E-MAIL';
   }
 }
-
 function exibirMsgModal(texto, tipo) {
   const msg = document.getElementById('modal-msg');
   msg.textContent = texto;
   msg.className   = 'modal-msg ' + tipo;
   msg.style.display = 'block';
 }
-/* ===== /ESQUECI MINHA SENHA ===== */
 
-/* ===== CONTROLE DA SEÇÃO CARGA ===== */
+/* ===== CARGA ===== */
 let cargaRespondida = false;
 
 function setCarga(opcao) {
   cargaRespondida = opcao;
-  const btnSim    = document.getElementById('btn-carga-sim');
-  const btnNao    = document.getElementById('btn-carga-nao');
-  const campos    = document.getElementById('carga-campos');
+  document.getElementById('btn-carga-sim').className = 'toggle-carga-btn' + (opcao === 'sim' ? ' sim-ativo' : '');
+  document.getElementById('btn-carga-nao').className = 'toggle-carga-btn' + (opcao === 'nao' ? ' nao-ativo' : '');
+  const campos = document.getElementById('carga-campos');
+  if (opcao === 'sim') campos.classList.add('visivel');
+  else {
+    campos.classList.remove('visivel');
+    if (currentPosto) currentPosto.combustiveis.forEach(c => {
+      const el = document.getElementById('carga-' + c.id);
+      if (el) el.value = '0';
+    });
+  }
   const btnSalvar = document.getElementById('btn-salvar-fechamento');
   const statusMsg = document.getElementById('carga-status-msg');
-  btnSim.className = 'toggle-carga-btn';
-  btnNao.className = 'toggle-carga-btn';
-  if (opcao === 'sim') {
-    btnSim.classList.add('sim-ativo');
-    campos.classList.add('visivel');
-  } else {
-    btnNao.classList.add('nao-ativo');
-    campos.classList.remove('visivel');
-    if (currentPosto) {
-      currentPosto.combustiveis.forEach(c => {
-        const el = document.getElementById('carga-' + c.id);
-        if (el) el.value = '0';
-      });
-    }
-  }
   btnSalvar.classList.remove('btn-save-blocked');
   btnSalvar.textContent = '💾 Salvar Fechamento Diário';
-  statusMsg.textContent = opcao === 'sim'
-    ? '🚚 Carga informada — preencha os litros acima'
-    : '✓ Sem carga hoje — pronto para salvar';
+  statusMsg.textContent = opcao === 'sim' ? '🚚 Carga informada — preencha os litros' : '✓ Sem carga hoje';
   statusMsg.style.color = opcao === 'sim' ? 'var(--warning)' : 'var(--accent)';
 }
 
@@ -168,61 +123,44 @@ function buildCarga(combustiveis) {
     body.appendChild(row);
   });
 }
-
-/* Formata o input de carga com ponto de milhar enquanto digita */
 function formatCargaInput(el) {
-  // Remove tudo que não for dígito
-  const digits = el.value.replace(/\D/g, '');
-  const num    = parseInt(digits) || 0;
+  const num = parseInt(el.value.replace(/\D/g, '')) || 0;
   el.dataset.val = num;
-  // Exibe com ponto de milhar
   el.value = num === 0 ? '0' : num.toLocaleString('pt-BR');
 }
-
-/* Stepper dos campos de carga — usa dataset.val para guardar o valor numérico */
 function stepCarga(id, delta) {
-  const el  = document.getElementById(id);
-  const val = parseInt(el.dataset.val) || 0;
-  const novo = Math.max(0, val + delta);
+  const el = document.getElementById(id);
+  const novo = Math.max(0, (parseInt(el.dataset.val) || 0) + delta);
   el.dataset.val = novo;
   el.value = novo === 0 ? '0' : novo.toLocaleString('pt-BR');
 }
-
 function resetCarga() {
   cargaRespondida = false;
-  const btnSim    = document.getElementById('btn-carga-sim');
-  const btnNao    = document.getElementById('btn-carga-nao');
-  const campos    = document.getElementById('carga-campos');
+  ['btn-carga-sim','btn-carga-nao'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.className = 'toggle-carga-btn';
+  });
+  const campos = document.getElementById('carga-campos');
+  if (campos) campos.classList.remove('visivel');
+  if (currentPosto) currentPosto.combustiveis.forEach(c => {
+    const el = document.getElementById('carga-' + c.id);
+    if (el) { el.value = '0'; el.dataset.val = '0'; }
+  });
   const btnSalvar = document.getElementById('btn-salvar-fechamento');
   const statusMsg = document.getElementById('carga-status-msg');
-  if (btnSim)    btnSim.className    = 'toggle-carga-btn';
-  if (btnNao)    btnNao.className    = 'toggle-carga-btn';
-  if (campos)    campos.classList.remove('visivel');
-  if (currentPosto) {
-    currentPosto.combustiveis.forEach(c => {
-      const el = document.getElementById('carga-' + c.id);
-      if (el) { el.value = '0'; el.dataset.val = '0'; }
-    });
-  }
   if (btnSalvar) { btnSalvar.classList.add('btn-save-blocked'); btnSalvar.textContent = '🔒 RESPONDA A CARGA PARA SALVAR'; }
   if (statusMsg) { statusMsg.textContent = '⚠ seção "Recebeu Carga?" obrigatória'; statusMsg.style.color = 'var(--danger)'; }
 }
-/* ===== /CONTROLE DA SEÇÃO CARGA ===== */
 
-/* ===== TOGGLE OLHO SENHA ===== */
+/* ===== TOGGLE OLHO ===== */
 function toggleSenha() {
   const input = document.getElementById('login-senha');
   const btn   = document.getElementById('btn-olho');
-  if (input.type === 'password') {
-    input.type = 'text';
-    btn.textContent = '🙈';
-  } else {
-    input.type = 'password';
-    btn.textContent = '👁';
-  }
+  if (input.type === 'password') { input.type = 'text'; btn.textContent = '🙈'; }
+  else { input.type = 'password'; btn.textContent = '👁'; }
 }
-/* ===== /TOGGLE OLHO SENHA ===== */
 
+/* =====================  LOGIN — NOVA API  ===================== */
 async function doLogin() {
   const email   = document.getElementById('login-email').value.trim().toLowerCase();
   const senha   = document.getElementById('login-senha').value;
@@ -233,36 +171,55 @@ async function doLogin() {
   errEl.style.display = 'none';
   if (btn) { btn.disabled = true; btn.textContent = '⏳ Entrando...'; }
 
-  // Valida no servidor e carrega arqueação + concorrentes + campo extra
-  const usuario = await carregarDadosSecretos(email, senha);
-
-  if (btn) { btn.disabled = false; btn.textContent = '▶ ENTRAR'; }
-
-  if (!usuario) {
-    errEl.style.display = 'block';
-    return;
-  }
-
-  // Encontra o posto pela chave retornada pelo servidor
-  const foundPosto = DB[usuario.postoKey];
-  if (!foundPosto) {
-    errEl.style.display = 'block';
-    return;
-  }
-
-  /* Salvar ou limpar credenciais conforme checkbox */
   try {
-    if (lembrar) {
-      localStorage.setItem('jbretas_remember', JSON.stringify({ email, senha }));
-    } else {
-      localStorage.removeItem('jbretas_remember');
-    }
-  } catch(e) {}
+    const resp = await fetch(API_URL + '/auth/login', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email, senha }),
+    });
+    const json = await resp.json();
+    if (btn) { btn.disabled = false; btn.textContent = '▶ ENTRAR'; }
 
-  currentUser  = { email: usuario.email, gerente: usuario.gerente, senha };
-  currentPosto = foundPosto;
-  initApp();
-  showScreen('app');
+    if (!json.success || !json.token) {
+      errEl.style.display = 'block';
+      return;
+    }
+
+    JWT_TOKEN = json.token;
+    localStorage.setItem('jbretas_token', JWT_TOKEN);
+
+    // Encontra posto no DB local pelo nome retornado pela API
+    const nomePostoApi = json.usuario?.posto?.nome || '';
+    const postoKey = Object.keys(DB).find(k =>
+      DB[k].nome.toUpperCase() === nomePostoApi.toUpperCase()
+    );
+    const foundPosto = postoKey ? DB[postoKey] : null;
+
+    if (json.usuario?.perfil === 'GERENTE' && !foundPosto) {
+      errEl.style.display = 'block';
+      return;
+    }
+
+    try {
+      if (lembrar) localStorage.setItem('jbretas_remember', JSON.stringify({ email, senha }));
+      else localStorage.removeItem('jbretas_remember');
+    } catch(e) {}
+
+    currentUser  = {
+      email:   json.usuario.email,
+      gerente: json.usuario.nome,
+      perfil:  json.usuario.perfil,
+    };
+    currentPosto = foundPosto;
+
+    initApp();
+    showScreen('app');
+
+  } catch (err) {
+    if (btn) { btn.disabled = false; btn.textContent = '▶ ENTRAR'; }
+    console.error('Erro no login:', err);
+    errEl.style.display = 'block';
+  }
 }
 
 document.getElementById('login-senha').addEventListener('keydown', e => {
@@ -270,9 +227,8 @@ document.getElementById('login-senha').addEventListener('keydown', e => {
 });
 
 function doLogout() {
-  currentUser = null;
-  currentPosto = null;
-  /* Não limpa o campo se "lembrar de mim" estava ativo */
+  JWT_TOKEN = null; currentUser = null; currentPosto = null;
+  localStorage.removeItem('jbretas_token');
   const saved = JSON.parse(localStorage.getItem('jbretas_remember') || 'null');
   if (!saved) {
     document.getElementById('login-email').value = '';
@@ -287,82 +243,56 @@ function showScreen(name) {
 }
 
 /* =====================  APP  ===================== */
+let dataRelatorio = null;
 
-// Data do relatório — padrão = ontem (gerente envia hoje o relatório de ontem)
-let dataRelatorio = null; // será definida no initApp
-
-function getOntem() {
-  const d = new Date();
-  d.setDate(d.getDate() - 1);
-  return d;
-}
-
+function getOntem() { const d = new Date(); d.setDate(d.getDate()-1); return d; }
 function dateToInputValue(d) {
-  // Formato YYYY-MM-DD para input type=date
-  const y = d.getFullYear();
-  const m = String(d.getMonth() + 1).padStart(2, '0');
-  const day = String(d.getDate()).padStart(2, '0');
-  return y + '-' + m + '-' + day;
+  return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
 }
-
-function dateToBR(d) {
-  return d.toLocaleDateString('pt-BR');
-}
-
-function inputValueToDate(val) {
-  // val = "YYYY-MM-DD"
-  const [y, m, d] = val.split('-').map(Number);
-  return new Date(y, m - 1, d);
-}
+function dateToBR(d) { return d.toLocaleDateString('pt-BR'); }
+function inputValueToDate(val) { const [y,m,d] = val.split('-').map(Number); return new Date(y,m-1,d); }
 
 function atualizarDataRelatorio(val) {
   dataRelatorio = inputValueToDate(val);
-  const hoje = new Date();
-  const ontem = getOntem();
   const aviso = document.getElementById('data-aviso');
   const dataBR = dateToBR(dataRelatorio);
-  if (dataBR === dateToBR(ontem)) {
-    aviso.textContent = '⚠ Relatório referente a ontem';
-    aviso.style.color = 'var(--warning)';
-  } else if (dataBR === dateToBR(hoje)) {
-    aviso.textContent = '⚠ Data de hoje — confirme se está correto';
-    aviso.style.color = 'var(--danger)';
+  if (dataBR === dateToBR(getOntem())) {
+    aviso.textContent = '⚠ Relatório referente a ontem'; aviso.style.color = 'var(--warning)';
+  } else if (dataBR === dateToBR(new Date())) {
+    aviso.textContent = '⚠ Data de hoje — confirme se está correto'; aviso.style.color = 'var(--danger)';
   } else {
-    aviso.textContent = '📅 Data selecionada: ' + dataBR;
-    aviso.style.color = 'var(--accent)';
+    aviso.textContent = '📅 Data selecionada: ' + dataBR; aviso.style.color = 'var(--accent)';
   }
 }
 
 function initApp() {
   const gerente = currentUser.gerente;
-  const posto = currentPosto;
+  const posto   = currentPosto;
   const initials = gerente.split(' ').map(w => w[0]).slice(0,2).join('');
-
-  // Padrão: ontem (relatório enviado hoje referente a ontem)
-  const ontem = getOntem();
-  dataRelatorio = ontem;
+  const ontem    = getOntem();
+  dataRelatorio  = ontem;
   const inputVal = dateToInputValue(ontem);
-  const dateStr = ontem.toLocaleDateString('pt-BR', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+  const dateStr  = ontem.toLocaleDateString('pt-BR', { weekday:'long', year:'numeric', month:'long', day:'numeric' });
 
-  document.getElementById('app-avatar').textContent = initials;
+  document.getElementById('app-avatar').textContent  = initials;
   document.getElementById('app-gerente').textContent = gerente;
-  document.getElementById('app-posto').textContent = posto.nome;
+  document.getElementById('app-posto').textContent   = posto ? posto.nome : '—';
   document.getElementById('card-gerente').textContent = gerente;
-  document.getElementById('card-posto').textContent = posto.nome;
-  document.getElementById('card-data-input').value = inputVal;
-  document.getElementById('page-date').textContent = dateStr;
+  document.getElementById('card-posto').textContent   = posto ? posto.nome : '—';
+  document.getElementById('card-data-input').value    = inputVal;
+  document.getElementById('page-date').textContent    = dateStr;
 
-  // MUDANÇA 1: reordena tanques igual à planilha antes de exibir
-  const tanquesOrdenados = posto.tanques.slice().sort((a, b) => {
-    const ia = ORDEM_COMB_APP.indexOf(a.fuel);
-    const ib = ORDEM_COMB_APP.indexOf(b.fuel);
-    return (ia === -1 ? 99 : ia) - (ib === -1 ? 99 : ib);
-  });
-
-  buildTanques(tanquesOrdenados);
-  buildVendas(posto.combustiveis);
+  if (posto) {
+    const tanquesOrdenados = posto.tanques.slice().sort((a,b) => {
+      const ia = ORDEM_COMB_APP.indexOf(a.fuel);
+      const ib = ORDEM_COMB_APP.indexOf(b.fuel);
+      return (ia===-1?99:ia)-(ib===-1?99:ib);
+    });
+    buildTanques(tanquesOrdenados);
+    buildVendas(posto.combustiveis);
+    buildCarga(posto.combustiveis);
+  }
   updateTotals();
-  buildCarga(posto.combustiveis);
   resetCarga();
 }
 
@@ -374,8 +304,6 @@ function buildTanques(tanques) {
     const isGNV = t.arq === 'gnv';
     const row = document.createElement('div');
     row.className = 'tank-row';
-    // Veeder-Root: input de litros direto (sem stepper de cm)
-    // GNV: oculta input (sem medição)
     const inputBlock = isGNV
       ? `<div class="tank-vol" id="vol-${t.id}" style="color:var(--text3)">— GNV</div>`
       : isVR
@@ -384,7 +312,7 @@ function buildTanques(tanques) {
              <button class="step-btn" onclick="stepChange('cm-${t.id}',-100)">−</button>
              <input class="step-input" id="cm-${t.id}" value="0" type="number" min="0"
                style="width:80px"
-               oninput="updateVol('${t.id}', ${t.capacidade}, '${t.arq || ''}')">
+               oninput="updateVol('${t.id}', ${t.capacidade}, '${t.arq||''}')">
              <button class="step-btn" onclick="stepChange('cm-${t.id}',100)">+</button>
            </div>
            <div style="font-size:0.7rem;color:var(--accent);margin-top:2px;text-align:center">Veeder-Root (litros)</div>`
@@ -392,19 +320,15 @@ function buildTanques(tanques) {
            <div class="stepper">
              <button class="step-btn" onclick="stepChange('cm-${t.id}',-1)">−</button>
              <input class="step-input" id="cm-${t.id}" value="0" type="number" min="0" max="260"
-               oninput="updateVol('${t.id}', ${t.capacidade}, '${t.arq || ''}')">
+               oninput="updateVol('${t.id}', ${t.capacidade}, '${t.arq||''}')">
              <button class="step-btn" onclick="stepChange('cm-${t.id}',1)">+</button>
            </div>`;
     row.innerHTML = `
       <div class="tank-info">
-        <div class="tank-fuel">
-          <span class="fuel-chip ${t.chip || ''}"></span>${t.fuel}
-        </div>
+        <div class="tank-fuel"><span class="fuel-chip ${t.chip||''}"></span>${t.fuel}</div>
         <div class="tank-name">${t.nome}</div>
         <div class="tank-cap">Cap: ${t.capacidade.toLocaleString('pt-BR')} L</div>
-      </div>
-      ${inputBlock}
-    `;
+      </div>${inputBlock}`;
     body.appendChild(row);
   });
 }
@@ -416,26 +340,22 @@ function buildVendas(combustiveis) {
     const div = document.createElement('div');
     div.className = 'fuel-row';
     div.innerHTML = `
-      <span class="fuel-label">
-        <span class="fuel-chip ${c.chip}"></span>${c.label}
-      </span>
+      <span class="fuel-label"><span class="fuel-chip ${c.chip||''}"></span>${c.label}</span>
       <div class="stepper">
         <button class="step-btn" onclick="stepChange('venda-${c.id}',-100)">−</button>
         <input class="step-input" id="venda-${c.id}" value="0" type="number" min="0"
           style="width:70px" oninput="updateTotals()">
         <button class="step-btn" onclick="stepChange('venda-${c.id}',100)">+</button>
-      </div>
-    `;
+      </div>`;
     body.appendChild(div);
   });
 }
 
 function updateVol(id, cap, arq) {
-  const cm = parseInt(document.getElementById('cm-' + id).value) || 0;
+  const cm  = parseInt(document.getElementById('cm-'+id).value) || 0;
   const vol = cmToLitros(cm, cap, arq);
-  document.getElementById('vol-' + id).textContent = vol.toLocaleString('pt-BR') + ' L';
-  // Limpa o destaque de erro assim que o gerente começa a preencher
-  const stepperEl = document.getElementById('cm-' + id)?.closest('.stepper');
+  document.getElementById('vol-'+id).textContent = vol.toLocaleString('pt-BR') + ' L';
+  const stepperEl = document.getElementById('cm-'+id)?.closest('.stepper');
   if (stepperEl) stepperEl.classList.remove('erro');
 }
 
@@ -444,7 +364,7 @@ function stepChange(id, delta) {
   const val = parseInt(el.value) || 0;
   const min = parseInt(el.min) || 0;
   const max = el.max ? parseInt(el.max) : Infinity;
-  el.value = Math.min(max, Math.max(min, val + delta));
+  el.value = Math.min(max, Math.max(min, val+delta));
   el.dispatchEvent(new Event('input'));
 }
 
@@ -452,143 +372,125 @@ function updateTotals() {
   if (!currentPosto) return;
   let total = 0;
   currentPosto.combustiveis.forEach(c => {
-    const el = document.getElementById('venda-' + c.id);
+    const el = document.getElementById('venda-'+c.id);
     if (el) {
       total += parseInt(el.value) || 0;
-      // Limpa o destaque de erro assim que o gerente começa a preencher
-      const stepperEl = el.closest('.stepper');
-      if (stepperEl) stepperEl.classList.remove('erro');
+      el.closest('.stepper')?.classList.remove('erro');
     }
   });
   document.getElementById('total-vendas').textContent = total.toLocaleString('pt-BR') + ' L';
 }
 
-/* ===== VALIDAÇÃO OBRIGATÓRIA — MEDIÇÃO E VENDA ===== */
-function limparErrosMedicaoVenda() {
-  document.querySelectorAll('#tanques-body .stepper.erro, #vendas-body .stepper.erro')
-    .forEach(el => el.classList.remove('erro'));
-}
-
 function validarMedicaoVenda() {
   if (!currentPosto) return true;
-  limparErrosMedicaoVenda();
-
-  // Medição de tanques — todo tanque com leitura (exceto GNV) precisa ter valor > 0
+  document.querySelectorAll('#tanques-body .stepper.erro, #vendas-body .stepper.erro')
+    .forEach(el => el.classList.remove('erro'));
   for (const t of currentPosto.tanques) {
-    if (t.arq === 'gnv') continue; // GNV não tem campo de medição
-    const input = document.getElementById('cm-' + t.id);
-    const val = parseInt(input?.value) || 0;
-    if (val <= 0) {
+    if (t.arq === 'gnv') continue;
+    const input = document.getElementById('cm-'+t.id);
+    if ((parseInt(input?.value) || 0) <= 0) {
       input.closest('.stepper')?.classList.add('erro');
-      input.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      input.scrollIntoView({ behavior:'smooth', block:'center' });
       input.focus();
-      showToast('Medição obrigatória', `Preencha a medição de "${t.nome} (${t.fuel})" antes de salvar.`);
+      showToast('Medição obrigatória', `Preencha a medição de "${t.nome} (${t.fuel})".`);
       return false;
     }
   }
-
-  // Vendas — todo combustível precisa ter litros vendidos preenchidos (> 0)
   for (const c of currentPosto.combustiveis) {
-    const input = document.getElementById('venda-' + c.id);
-    const val = parseInt(input?.value) || 0;
-    if (val <= 0) {
+    const input = document.getElementById('venda-'+c.id);
+    if ((parseInt(input?.value) || 0) <= 0) {
       input.closest('.stepper')?.classList.add('erro');
-      input.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      input.scrollIntoView({ behavior:'smooth', block:'center' });
       input.focus();
-      showToast('Venda obrigatória', `Preencha a venda de "${c.label}" antes de salvar.`);
+      showToast('Venda obrigatória', `Preencha a venda de "${c.label}".`);
       return false;
     }
   }
-
   return true;
 }
-/* ===== /VALIDAÇÃO OBRIGATÓRIA — MEDIÇÃO E VENDA ===== */
 
-/* =====================  SAVE  ===================== */
-const SHEETS_URL = window._SHEETS_URL;
-
-function salvarFechamento() {
+/* =====================  SAVE — NOVA API  ===================== */
+async function salvarFechamento() {
   if (!validarMedicaoVenda()) return;
   if (!cargaRespondida) {
     showToast('Atenção', 'Responda a seção "Recebeu Carga Hoje?" antes de salvar.');
     return;
   }
+
   const btn = document.getElementById('btn-salvar-fechamento');
   btn.textContent = '⏳ Salvando...';
   btn.disabled = true;
 
-  // MUDANÇA 2: monta tanqueInfo na mesma ordem da planilha
-  const tanquesOrdenadosSave = currentPosto.tanques.slice().sort((a, b) => {
+  // Monta string de tanques na ordem padronizada
+  const tanquesOrdenados = currentPosto.tanques.slice().sort((a,b) => {
     const ia = ORDEM_COMB_APP.indexOf(a.fuel);
     const ib = ORDEM_COMB_APP.indexOf(b.fuel);
-    return (ia === -1 ? 99 : ia) - (ib === -1 ? 99 : ib);
+    return (ia===-1?99:ia)-(ib===-1?99:ib);
   });
 
-  const tanqueInfo = tanquesOrdenadosSave.map(t => {
-    const cm  = document.getElementById('cm-' + t.id)?.value || 0;
+  const tanqueInfo = tanquesOrdenados.map(t => {
+    const cm  = document.getElementById('cm-'+t.id)?.value || 0;
     const vol = (t.arq === 'gnv') ? 0 : cmToLitros(parseInt(cm), t.capacidade, t.arq);
-    const unidade = t.arq === 'veederroot' ? 'L (VR)' : 'cm = ' + vol.toLocaleString('pt-BR') + 'L';
-    return t.arq === 'gnv'
-      ? `${t.nome} (${t.fuel}): GNV`
-      : t.arq === 'veederroot'
-        ? `${t.nome} (${t.fuel}): ${parseInt(cm).toLocaleString('pt-BR')}L`
-        : `${t.nome} (${t.fuel}): ${cm}cm = ${vol.toLocaleString('pt-BR')}L`;
+    if (t.arq === 'gnv')        return `${t.nome} (${t.fuel}): GNV`;
+    if (t.arq === 'veederroot') return `${t.nome} (${t.fuel}): ${parseInt(cm).toLocaleString('pt-BR')}L`;
+    return `${t.nome} (${t.fuel}): ${cm}cm = ${vol.toLocaleString('pt-BR')}L`;
   }).join(' | ');
 
   const vendasInfo = currentPosto.combustiveis.map(c => {
-    const val = document.getElementById('venda-' + c.id)?.value || 0;
+    const val = document.getElementById('venda-'+c.id)?.value || 0;
     return `${c.label}: ${parseInt(val).toLocaleString('pt-BR')}L`;
   }).join(' | ');
 
-  const totalVendas = document.getElementById('total-vendas')?.textContent || '0 L';
-
-  const lubSoutag = document.getElementById('lub-soutag')?.value || 0;
-  const lubDia    = document.getElementById('lub-dia')?.value || 0;
-
-  /* Carga por combustível */
   const cargaInfo = currentPosto.combustiveis.map(c => {
-    const el = document.getElementById('carga-' + c.id);
-    const litros = cargaRespondida === 'sim'
-      ? (parseInt(el?.dataset.val) || 0)
-      : 0;
+    const el = document.getElementById('carga-'+c.id);
+    const litros = cargaRespondida === 'sim' ? (parseInt(el?.dataset.val) || 0) : 0;
     return `${c.label}: ${litros}L`;
   }).join(' | ');
 
   const now  = new Date();
-  const data = dateToBR(dataRelatorio);  // data do relatório (ontem por padrão)
-  const hora = now.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' }); // hora do envio
+  const data = dateToBR(dataRelatorio);
+  const hora = now.toLocaleTimeString('pt-BR', { hour:'2-digit', minute:'2-digit' });
 
   const payload = {
-    data,
-    hora,
+    data, hora,
     posto:         currentPosto.nome,
     gerente:       currentUser.gerente,
     tanques:       tanqueInfo,
     vendas:        vendasInfo,
-    totalVendas,
-    lubSoutag,
-    lubDia,
+    totalVendas:   document.getElementById('total-vendas')?.textContent || '0 L',
+    lubSoutag:     document.getElementById('lub-soutag')?.value || 0,
+    lubDia:        document.getElementById('lub-dia')?.value || 0,
     cargaRecebida: cargaRespondida,
-    carga:         cargaInfo
+    carga:         cargaInfo,
   };
 
-  fetch(SHEETS_URL, {
-    method: 'POST',
-    mode: 'no-cors',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(payload)
-  })
-  .then(() => {
+  try {
+    const resp = await fetch(API_URL + '/fechamento', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer ' + JWT_TOKEN,
+      },
+      body: JSON.stringify(payload),
+    });
+
+    const json = await resp.json();
+
     btn.textContent = '💾 Salvar Fechamento Diário';
     btn.disabled = false;
-    showToast('Fechamento salvo com sucesso!', `${currentPosto.nome} — ${data} às ${hora}`);
-    resetCarga();
-  })
-  .catch(() => {
+
+    if (json.success) {
+      showToast('Fechamento salvo!', `${currentPosto.nome} — ${data} às ${hora}`);
+      resetCarga();
+    } else {
+      showToast('Erro ao salvar', json.erro || 'Tente novamente.');
+    }
+  } catch (err) {
     btn.textContent = '💾 Salvar Fechamento Diário';
     btn.disabled = false;
-    showToast('Erro ao salvar', 'Verifique sua conexão e tente novamente.');
-  });
+    console.error('Erro no fechamento:', err);
+    showToast('Erro de conexão', 'Verifique sua internet e tente novamente.');
+  }
 }
 
 function showToast(title, msg) {
@@ -598,3 +500,17 @@ function showToast(title, msg) {
   toast.classList.add('show');
   setTimeout(() => toast.classList.remove('show'), 4000);
 }
+
+/* ===== MENU ===== */
+function toggleMenu() {
+  document.getElementById('dropdown-menu').classList.toggle('hidden');
+}
+function abrirColeta() {
+  document.getElementById('dropdown-menu').classList.add('hidden');
+  showScreen('coleta');
+}
+function abrirCopasa() {
+  document.getElementById('dropdown-menu').classList.add('hidden');
+  showScreen('copasa');
+}
+function voltarParaApp() { showScreen('app'); }
